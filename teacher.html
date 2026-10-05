@@ -5,12 +5,16 @@
 <title>SchulUmfrage – Lehrerbereich</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-:root{--bg:#0b1020;--panel:#151c31;--panel2:#10172a;--a:#7c5cff;--t:#f5f7ff;--m:#9aa6c4;--l:#2b3757;--ok:#39d98a;--danger:#ff647c}*{box-sizing:border-box}body{margin:0;min-height:100vh;background:linear-gradient(135deg,#0b1020,#111a31 55%,#17112d);color:var(--t);font:15px system-ui,sans-serif}.wrap{max-width:1180px;margin:auto;padding:24px}.top{display:flex;justify-content:space-between;gap:16px;align-items:center;margin-bottom:18px}.brand{font-size:28px;font-weight:900}.muted{color:var(--m)}.panel{background:#151c31ee;border:1px solid var(--l);border-radius:18px;padding:20px}.hidden{display:none!important}.btn{border:0;border-radius:10px;background:var(--a);color:#fff;font:inherit;font-weight:800;padding:10px 14px;cursor:pointer}.btn.secondary{background:#263352}.btn.danger{background:#572638}.btn:disabled{opacity:.5;cursor:not-allowed}.row{display:flex;gap:9px;align-items:center;flex-wrap:wrap}.field{display:grid;gap:6px;margin:12px 0}.field input,.field select,.field textarea{width:100%;border:1px solid var(--l);background:#0d1427;color:var(--t);border-radius:10px;padding:11px;font:inherit}.login{max-width:470px;margin:12vh auto}.grid{display:grid;grid-template-columns:300px 1fr;gap:18px}.list{display:grid;gap:9px}.survey,.slide,.answer{border:1px solid var(--l);border-radius:13px;padding:14px;background:var(--panel2)}.survey.active{outline:2px solid var(--a)}.slide{margin-top:12px}.badge{display:inline-block;padding:4px 8px;border-radius:99px;background:#29345a;font-size:11px;font-weight:800}.status{display:inline-flex;gap:7px;align-items:center}.dot{width:8px;height:8px;border-radius:50%;background:var(--ok)}.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}.liveCode{font-size:40px;font-weight:900;letter-spacing:5px;text-align:center;padding:18px}.liveQuestion{font-size:26px;font-weight:900}.answerCount{font-size:25px;font-weight:900}.toast{position:fixed;right:18px;bottom:18px;background:#202b49;border:1px solid var(--l);border-radius:12px;padding:12px 15px;box-shadow:0 12px 35px #0006;max-width:420px}.empty{padding:25px;text-align:center;color:var(--m)}@media(max-width:850px){.grid,.two{grid-template-columns:1fr}.wrap{padding:14px}}
+:root{--bg:#0b1020;--panel:#151c31;--panel2:#10172a;--a:#7c5cff;--a2:#5d45cc;--t:#f5f7ff;--m:#9aa6c4;--l:#2b3757;--ok:#39d98a;--warn:#ffc857;--danger:#ff647c;--shadow:0 18px 50px #0004}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(circle at 15% 10%,#1b2250 0,transparent 30%),linear-gradient(135deg,#0b1020,#111a31 55%,#17112d);color:var(--t);font:15px system-ui,sans-serif}.wrap{max-width:1280px;margin:auto;padding:24px}.top{display:flex;justify-content:space-between;gap:16px;align-items:center;margin-bottom:18px}.brand{font-size:28px;font-weight:900}.muted{color:var(--m)}.panel{background:#151c31ee;border:1px solid var(--l);border-radius:18px;padding:20px;box-shadow:var(--shadow)}.hidden{display:none!important}.btn{border:0;border-radius:10px;background:var(--a);color:#fff;font:inherit;font-weight:800;padding:10px 14px;cursor:pointer;transition:.15s}.btn:hover{background:var(--a2)}.btn.secondary{background:#263352}.btn.secondary:hover{background:#324166}.btn.danger{background:#572638}.btn:disabled{opacity:.5;cursor:not-allowed}.row{display:flex;gap:9px;align-items:center;flex-wrap:wrap}.field{display:grid;gap:6px;margin:12px 0}.field input,.field select,.field textarea{width:100%;border:1px solid var(--l);background:#0d1427;color:var(--t);border-radius:10px;padding:11px;font:inherit}.login{max-width:470px;margin:12vh auto}.grid{display:grid;grid-template-columns:300px 1fr;gap:18px}.list{display:grid;gap:9px}.survey,.slide,.answer{border:1px solid var(--l);border-radius:13px;padding:14px;background:var(--panel2)}.survey.active{outline:2px solid var(--a)}.slide{margin-top:12px}.badge{display:inline-block;padding:4px 8px;border-radius:99px;background:#29345a;font-size:11px;font-weight:800}.status{display:inline-flex;gap:7px;align-items:center}.dot{width:8px;height:8px;border-radius:50%;background:var(--ok)}.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}.three{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.liveCode{font-size:42px;font-weight:900;letter-spacing:6px;text-align:center;padding:14px 8px}.liveQuestion{font-size:30px;font-weight:900;line-height:1.18}.liveMeta{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.progress{height:8px;background:#212c49;border-radius:99px;overflow:hidden}.progress>span{display:block;height:100%;background:linear-gradient(90deg,var(--a),#a48dff);transition:width .25s}.metric{padding:14px;border-radius:13px;background:#10172a;border:1px solid var(--l)}.metric .value{font-size:28px;font-weight:900}.metric .label{font-size:12px;color:var(--m);margin-top:2px}.empty{padding:25px;text-align:center;color:var(--m);border:1px dashed var(--l);border-radius:13px}.barRow{display:grid;grid-template-columns:minmax(110px,180px) 1fr 60px;gap:10px;align-items:center;margin:10px 0}.barTrack{height:18px;border-radius:99px;background:#1e2843;overflow:hidden}.barFill{height:100%;background:linear-gradient(90deg,var(--a),#8f7bff);transition:width .35s}.chipCloud{display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap;padding:12px}.chip{display:inline-flex;align-items:center;padding:7px 11px;border-radius:999px;background:#263352;border:1px solid #344367}.textAnswer{padding:13px 14px;border:1px solid var(--l);border-radius:13px;background:#11192e}.textAnswer .name{font-weight:800}.textAnswer .time{font-size:12px;color:var(--m)}.textAnswer .text{margin-top:7px;line-height:1.45;white-space:pre-wrap;overflow-wrap:anywhere}.rankRow{display:grid;grid-template-columns:40px 1fr 60px;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid #202a45}.rankRow:last-child{border-bottom:0}.rankNo{font-size:20px;font-weight:900}.liveHeader{display:flex;align-items:end;justify-content:space-between;gap:16px}.liveActions{display:flex;gap:9px;flex-wrap:wrap;justify-content:flex-end}.toast{position:fixed;right:18px;bottom:18px;background:#202b49;border:1px solid var(--l);border-radius:12px;padding:12px 15px;box-shadow:0 12px 35px #0006;max-width:420px;z-index:50}.subtle{font-size:12px;color:var(--m)}.answerTitle{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:12px}.liveCard{padding:18px}.sessionPill{padding:6px 10px;border-radius:99px;background:#173b31;color:#8df0be;font-weight:800;font-size:12px}.sessionPill.ended{background:#402334;color:#ffb3c2}.nowrap{white-space:nowrap}@media(max-width:980px){.grid,.two,.three{grid-template-columns:1fr}.liveHeader{align-items:flex-start;flex-direction:column}.liveActions{justify-content:flex-start}}@media(max-width:700px){.wrap{padding:14px}.liveQuestion{font-size:24px}.liveCode{font-size:34px}.barRow{grid-template-columns:90px 1fr 42px}}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <header class="top"><div><div class="brand">SchulUmfrage</div><div class="muted">Lehrerbereich</div></div><div class="row"><span id="connection" class="status muted"><span class="dot"></span> Supabase</span><button id="logoutBtn" class="btn secondary hidden">Abmelden</button></div></header>
+  <header class="top">
+    <div><div class="brand">SchulUmfrage</div><div class="muted">Lehrerbereich · Live-Moderation</div></div>
+    <div class="row"><span id="connection" class="status muted"><span class="dot"></span> Verbinde …</span><button id="logoutBtn" class="btn secondary hidden">Abmelden</button></div>
+  </header>
 
   <section id="loginView" class="panel login">
     <span class="badge">GESCHÜTZTER LEHRERBEREICH</span><h1>Anmelden</h1>
@@ -20,17 +24,51 @@
 
   <section id="appView" class="hidden">
     <div class="grid">
-      <aside class="panel"><div class="row" style="justify-content:space-between"><h2>Umfragen</h2><button id="newBtn" class="btn">＋</button></div><div id="surveyList" class="list"></div></aside>
+      <aside class="panel">
+        <div class="row" style="justify-content:space-between"><h2>Umfragen</h2><button id="newBtn" class="btn">＋</button></div>
+        <div id="surveyList" class="list"></div>
+      </aside>
       <main>
         <section id="editorView" class="panel">
           <div class="row" style="justify-content:space-between"><div><span class="badge">EDITOR</span><h1 id="editorTitle">Umfrage auswählen</h1></div><div class="row"><button id="saveBtn" class="btn secondary" disabled>Speichern</button><button id="startBtn" class="btn" disabled>▶ Starten</button></div></div>
           <div id="editorEmpty" class="empty">Erstelle eine neue Umfrage oder wähle links eine vorhandene Umfrage aus.</div>
           <div id="editorForm" class="hidden"><div class="field"><label>Umfrage-Name</label><input id="surveyName"></div><div id="slides"></div><button id="addSlideBtn" class="btn secondary">＋ Folie hinzufügen</button></div>
         </section>
+
         <section id="sessionView" class="panel hidden" style="margin-top:18px">
-          <div class="row" style="justify-content:space-between"><div><span class="badge">LIVE</span><h1 id="sessionTitle">Umfrage läuft</h1><div class="muted"><span id="participantCount">0</span> Teilnehmer · <span id="responseCount">0</span> Antworten</div></div><div class="row"><button id="restartBtn" class="btn secondary">↻ Neu starten</button><button id="stopBtn" class="btn danger">■ Beenden</button></div></div>
-          <div class="two" style="margin-top:15px"><div class="panel"><div class="muted">Teilnahmecode</div><div id="joinCode" class="liveCode">------</div><div class="muted" style="text-align:center">Schülerseite: /student.html</div></div><div class="panel"><div class="muted">Aktuelle Folie</div><div id="liveQuestion" class="liveQuestion">Warte …</div><div id="liveType" class="muted"></div><div class="row" style="margin-top:18px"><button id="prevBtn" class="btn secondary">← Zurück</button><button id="nextBtn" class="btn">Weiter →</button></div></div></div>
-          <div style="margin-top:16px"><h2>Live-Antworten</h2><div id="answers" class="list"></div></div>
+          <div class="liveHeader">
+            <div>
+              <div class="liveMeta"><span class="badge">LIVE</span><span id="sessionPill" class="sessionPill">LÄUFT</span></div>
+              <h1 id="sessionTitle">Umfrage läuft</h1>
+              <div class="muted">Code <b id="topJoinCode">------</b> · <span id="participantCount">0</span> Teilnehmer · <span id="currentResponseCount">0</span> Antworten auf dieser Folie</div>
+            </div>
+            <div class="liveActions"><button id="restartBtn" class="btn secondary">↻ Neu starten</button><button id="stopBtn" class="btn danger">■ Beenden</button></div>
+          </div>
+
+          <div class="three" style="margin-top:16px">
+            <div class="metric"><div id="metricParticipants" class="value">0</div><div class="label">Teilnehmer</div></div>
+            <div class="metric"><div id="metricAnswers" class="value">0</div><div class="label">Antworten gesamt</div></div>
+            <div class="metric"><div id="metricRate" class="value">0%</div><div class="label">Antwortquote auf dieser Folie</div></div>
+          </div>
+
+          <div class="two" style="margin-top:16px">
+            <div class="panel liveCard">
+              <div class="muted">Teilnahmecode</div>
+              <div id="joinCode" class="liveCode">------</div>
+              <div class="muted" style="text-align:center">Schülerseite: <span class="nowrap">student.html</span></div>
+            </div>
+            <div class="panel liveCard">
+              <div class="row" style="justify-content:space-between"><div><div class="muted">Aktuelle Folie</div><div><b id="slideIndicator">1 / 1</b></div></div><div class="subtle" id="liveType">Multiple-Choice</div></div>
+              <div style="margin:10px 0 18px" class="progress"><span id="slideProgress" style="width:100%"></span></div>
+              <div id="liveQuestion" class="liveQuestion">Warte …</div>
+              <div class="row" style="margin-top:20px"><button id="prevBtn" class="btn secondary">← Zurück</button><button id="nextBtn" class="btn">Weiter →</button></div>
+            </div>
+          </div>
+
+          <div style="margin-top:16px">
+            <div class="answerTitle"><div><h2 style="margin-bottom:3px">Live-Antworten</h2><div class="muted">Die Ansicht aktualisiert sich automatisch, sobald Schüler antworten.</div></div><span id="lastUpdate" class="subtle">Noch keine Daten</span></div>
+            <div id="answers"></div>
+          </div>
         </section>
       </main>
     </div>
@@ -41,35 +79,117 @@
 const SUPABASE_URL='https://mqtcwiiawmuxrpkjfrfc.supabase.co';
 const SUPABASE_KEY='sb_publishable_eY5NBW8EJHuyO2Ic5S3HBQ_tSwErhp-';
 const {createClient}=supabase; const db=createClient(SUPABASE_URL,SUPABASE_KEY);
-const $=id=>document.getElementById(id); const types=['Multiple-Choice','Wortwolke','Offene Frage','Skala','Ranking','Q&A','Pin setzen'];
-let surveys=[], currentSurvey=null, currentSession=null, realtimeChannel=null;
-function toast(msg){$('toast').textContent=msg;$('toast').classList.remove('hidden');setTimeout(()=>$('toast').classList.add('hidden'),3000)}
-function setLoggedIn(user){$('loginView').classList.toggle('hidden',!!user);$('appView').classList.toggle('hidden',!user);$('logoutBtn').classList.toggle('hidden',!user);}
+const $=id=>document.getElementById(id);
+const types=['Multiple-Choice','Wortwolke','Offene Frage','Skala','Ranking','Q&A','Pin setzen'];
+let surveys=[], currentSurvey=null, currentSession=null, realtimeChannel=null, participantMap=new Map();
+
+function toast(msg){$('toast').textContent=msg;$('toast').classList.remove('hidden');clearTimeout(window.__toast);window.__toast=setTimeout(()=>$('toast').classList.add('hidden'),3500)}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function setLoggedIn(user){$('loginView').classList.toggle('hidden',!!user);$('appView').classList.toggle('hidden',!user);$('logoutBtn').classList.toggle('hidden',!user)}
+function setConnection(ok,text='Realtime verbunden'){$('connection').innerHTML='<span class="dot" style="background:'+(ok?'var(--ok)':'var(--warn)')+'"></span> '+esc(text)}
+
 async function loadSurveys(){const {data,error}=await db.from('surveys').select('*').order('updated_at',{ascending:false});if(error){toast('Umfragen konnten nicht geladen werden: '+error.message);return}surveys=data||[];renderSurveyList()}
 function renderSurveyList(){$('surveyList').innerHTML='';if(!surveys.length){$('surveyList').innerHTML='<div class="empty">Noch keine Umfragen.</div>';return}surveys.forEach(s=>{const el=document.createElement('div');el.className='survey'+(currentSurvey?.id===s.id?' active':'');el.innerHTML='<b>'+esc(s.name)+'</b><div class="muted">'+((s.slides||[]).length)+' Folien</div><div class="row" style="margin-top:9px"><button class="btn secondary edit">Bearbeiten</button><button class="btn start">Starten</button><button class="btn danger del">Löschen</button></div>';el.querySelector('.edit').onclick=()=>selectSurvey(s.id);el.querySelector('.start').onclick=()=>startSurvey(s.id);el.querySelector('.del').onclick=()=>deleteSurvey(s.id);$('surveyList').appendChild(el)})}
 function selectSurvey(id){currentSurvey=surveys.find(s=>s.id===id)||null;renderSurveyList();$('editorEmpty').classList.toggle('hidden',!currentSurvey);$('editorForm').classList.toggle('hidden',!currentSurvey);$('saveBtn').disabled=!currentSurvey;$('startBtn').disabled=!currentSurvey;if(!currentSurvey)return;$('editorTitle').textContent=currentSurvey.name;$('surveyName').value=currentSurvey.name;renderSlides(currentSurvey.slides||[])}
 function renderSlides(slides){$('slides').innerHTML='';(slides.length?slides:[newSlide()]).forEach(addSlide)}
 function newSlide(){return {type:'Multiple-Choice',question:'Neue Frage',options:['Option 1','Option 2']}}
-function addSlide(slide=newSlide()){const n=$('slides').children.length+1,e=document.createElement('div');e.className='slide';e.innerHTML='<div class="row" style="justify-content:space-between"><b>Folie '+n+'</b><button class="btn danger remove">Entfernen</button></div><div class="field"><label>Art der Umfrage</label><select class="type">'+types.map(t=>'<option>'+t+'</option>').join('')+'</select></div><div class="field"><label>Frage / Überschrift</label><textarea class="question" rows="2"></textarea></div><div class="field"><label>Antwortoptionen (eine pro Zeile)</label><textarea class="options" rows="3"></textarea></div>';e.querySelector('.type').value=slide.type||types[0];e.querySelector('.question').value=slide.question||'';e.querySelector('.options').value=(slide.options||[]).join('\n');e.querySelector('.remove').onclick=()=>{e.remove();renumberSlides()};$('slides').appendChild(e)}
+function addSlide(slide=newSlide()){const n=$('slides').children.length+1,e=document.createElement('div');e.className='slide';e.innerHTML='<div class="row" style="justify-content:space-between"><b>Folie '+n+'</b><button class="btn danger remove">Entfernen</button></div><div class="field"><label>Art der Umfrage</label><select class="type">'+types.map(t=>'<option>'+esc(t)+'</option>').join('')+'</select></div><div class="field"><label>Frage / Überschrift</label><textarea class="question" rows="2"></textarea></div><div class="field"><label>Antwortoptionen (eine pro Zeile)</label><textarea class="options" rows="3"></textarea></div>';e.querySelector('.type').value=slide.type||types[0];e.querySelector('.question').value=slide.question||'';e.querySelector('.options').value=(slide.options||[]).join('\n');e.querySelector('.remove').onclick=()=>{e.remove();renumberSlides()};$('slides').appendChild(e)}
 function renumberSlides(){[...$('slides').children].forEach((e,i)=>e.querySelector('b').textContent='Folie '+(i+1))}
 function collectSlides(){return [...$('slides').children].map(e=>({type:e.querySelector('.type').value,question:e.querySelector('.question').value.trim(),options:e.querySelector('.options').value.split('\n').map(x=>x.trim()).filter(Boolean)}))}
 async function saveSurvey(){if(!currentSurvey)return;const name=$('surveyName').value.trim()||'Unbenannte Umfrage',slides=collectSlides();const {data,error}=await db.from('surveys').update({name,slides,updated_at:new Date().toISOString()}).eq('id',currentSurvey.id).select().single();if(error){toast('Speichern fehlgeschlagen: '+error.message);return}currentSurvey=data;surveys=surveys.map(s=>s.id===data.id?data:s);renderSurveyList();toast('Umfrage gespeichert.')}
-async function createSurvey(){const user=(await db.auth.getUser()).data.user;const {data,error}=await db.from('surveys').insert({owner_id:user.id,name:'Neue Umfrage',slides:[newSlide()]}).select().single();if(error){toast('Erstellen fehlgeschlagen: '+error.message);return}surveys.unshift(data);selectSurvey(data.id)}
-async function deleteSurvey(id){if(!confirm('Umfrage wirklich löschen?'))return;const {error}=await db.from('surveys').delete().eq('id',id);if(error){toast('Löschen fehlgeschlagen: '+error.message);return}if(currentSurvey?.id===id){currentSurvey=null;$('editorEmpty').classList.remove('hidden');$('editorForm').classList.add('hidden');$('saveBtn').disabled=true;$('startBtn').disabled=true}surveys=surveys.filter(s=>s.id!==id);renderSurveyList();toast('Umfrage gelöscht.')}
+async function createSurvey(){const user=(await db.auth.getUser()).data.user;if(!user){toast('Bitte zuerst anmelden.');return}const {data,error}=await db.from('surveys').insert({owner_id:user.id,name:'Neue Umfrage',slides:[newSlide()]}).select().single();if(error){toast('Erstellen fehlgeschlagen: '+error.message);return}surveys.unshift(data);selectSurvey(data.id)}
+async function deleteSurvey(id){if(!confirm('Umfrage wirklich löschen?'))return;const {error}=await db.from('surveys').delete().eq('id',id);if(error){toast('Löschen fehlgeschlagen: '+error.message);return}if(currentSurvey?.id===id){currentSurvey=null;$('editorEmpty').classList.remove('hidden');$('editorForm').classList.add('hidden');$('saveBtn').disabled=true;$('startBtn').disabled=true}$('sessionView').classList.add('hidden');surveys=surveys.filter(s=>s.id!==id);renderSurveyList();toast('Umfrage gelöscht.')}
 function makeCode(){return Math.random().toString(36).slice(2,7).toUpperCase()}
-async function startSurvey(id){const s=surveys.find(x=>x.id===id);if(!s)return;const user=(await db.auth.getUser()).data.user;const join_code=makeCode();const {data,error}=await db.from('sessions').insert({survey_id:s.id,owner_id:user.id,title:s.name,survey_snapshot:s.slides,status:'lobby',current_slide:0,join_code}).select().single();if(error){toast('Session konnte nicht gestartet werden: '+error.message);return}currentSession=data;$('sessionView').classList.remove('hidden');$('sessionTitle').textContent=s.name;subscribeSession();await refreshSession();await setSessionStatus('running');}
-function subscribeSession(){if(realtimeChannel)db.removeChannel(realtimeChannel);realtimeChannel=db.channel('teacher-session-'+currentSession.id).on('postgres_changes',{event:'*',schema:'public',table:'sessions',filter:'id=eq.'+currentSession.id},payload=>{if(payload.new){currentSession=payload.new;renderSession()}}).on('postgres_changes',{event:'INSERT',schema:'public',table:'participants',filter:'session_id=eq.'+currentSession.id},()=>refreshCounts()).on('postgres_changes',{event:'*',schema:'public',table:'responses',filter:'session_id=eq.'+currentSession.id},()=>refreshCounts()).subscribe();}
-async function refreshSession(){const {data,error}=await db.from('sessions').select('*').eq('id',currentSession.id).single();if(!error){currentSession=data;renderSession()}await refreshCounts()}
-function renderSession(){if(!currentSession)return;const slides=currentSession.survey_snapshot||[];const i=currentSession.current_slide||0;const f=slides[i]||{};$('joinCode').textContent=currentSession.join_code;$('liveQuestion').textContent=f.question||'Keine Frage';$('liveType').textContent=f.type||'';$('prevBtn').disabled=i<=0;$('nextBtn').disabled=i>=slides.length-1;renderAnswers([])}
-async function refreshCounts(){if(!currentSession)return;const [p,r]=await Promise.all([db.from('participants').select('id',{count:'exact',head:true}).eq('session_id',currentSession.id),db.from('responses').select('id',{count:'exact',head:true}).eq('session_id',currentSession.id)]);$('participantCount').textContent=p.count||0;$('responseCount').textContent=r.count||0;const {data}=await db.from('responses').select('id,participant_id,slide_index,answer,created_at').eq('session_id',currentSession.id).eq('slide_index',currentSession.current_slide).order('created_at',{ascending:false});renderAnswers(data||[])}
-function renderAnswers(rows){$('answers').innerHTML='';if(!rows.length){$('answers').innerHTML='<div class="empty">Noch keine Antworten auf dieser Folie.</div>';return}rows.forEach(r=>{const e=document.createElement('div');e.className='answer';e.innerHTML='<div class="row" style="justify-content:space-between"><b>'+esc(JSON.stringify(r.answer))+'</b><span class="muted">'+new Date(r.created_at).toLocaleTimeString('de-DE')+'</span></div>';$('answers').appendChild(e)})}
+
+async function startSurvey(id){
+  const s=surveys.find(x=>x.id===id); if(!s)return;
+  const user=(await db.auth.getUser()).data.user;if(!user){toast('Nicht angemeldet.');return}
+  if(currentSession?.id) await cleanupRealtime();
+  const join_code=makeCode();
+  const {data,error}=await db.from('sessions').insert({survey_id:s.id,owner_id:user.id,title:s.name,survey_snapshot:s.slides,status:'lobby',current_slide:0,join_code}).select().single();
+  if(error){toast('Session konnte nicht gestartet werden: '+error.message);return}
+  currentSession=data;$('sessionView').classList.remove('hidden');$('sessionTitle').textContent=s.name;renderSession();
+  subscribeSession();
+  await refreshLiveData();
+  await setSessionStatus('running');
+}
+async function cleanupRealtime(){if(realtimeChannel){await db.removeChannel(realtimeChannel);realtimeChannel=null}setConnection(true,'Verbinde …')}
+function subscribeSession(){
+  if(realtimeChannel)db.removeChannel(realtimeChannel);
+  realtimeChannel=db.channel('teacher-session-'+currentSession.id)
+    .on('postgres_changes',{event:'*',schema:'public',table:'sessions',filter:'id=eq.'+currentSession.id},payload=>{if(payload.new){currentSession=payload.new;renderSession();if(payload.new.status!=='ended')refreshLiveData()}})
+    .on('postgres_changes',{event:'INSERT',schema:'public',table:'participants',filter:'session_id=eq.'+currentSession.id},()=>refreshLiveData())
+    .on('postgres_changes',{event:'*',schema:'public',table:'responses',filter:'session_id=eq.'+currentSession.id},()=>refreshLiveData())
+    .subscribe(status=>{setConnection(status==='SUBSCRIBED',status==='SUBSCRIBED'?'Realtime verbunden':'Realtime: '+status)});
+}
+async function refreshSession(){if(!currentSession)return;const {data,error}=await db.from('sessions').select('*').eq('id',currentSession.id).single();if(!error){currentSession=data;renderSession()}await refreshLiveData()}
+function renderSession(){
+  if(!currentSession)return;
+  const slides=currentSession.survey_snapshot||[], i=currentSession.current_slide||0, f=slides[i]||{};
+  $('joinCode').textContent=currentSession.join_code||'------';$('topJoinCode').textContent=currentSession.join_code||'------';$('liveQuestion').textContent=f.question||'Keine Frage';$('liveType').textContent=f.type||'';
+  $('slideIndicator').textContent=(slides.length?i+1:0)+' / '+slides.length;
+  $('slideProgress').style.width=(slides.length?((i+1)/slides.length*100):0)+'%';
+  $('prevBtn').disabled=i<=0||currentSession.status==='ended';$('nextBtn').disabled=i>=slides.length-1||currentSession.status==='ended';
+  const ended=currentSession.status==='ended';$('sessionPill').textContent=ended?'BEENDET':'LÄUFT';$('sessionPill').classList.toggle('ended',ended);$('nextBtn').textContent=i>=slides.length-1?'Letzte Folie':'Weiter →';
+}
+
+async function refreshLiveData(){
+  if(!currentSession)return;
+  const sid=currentSession.id;
+  const [p,r]=await Promise.all([
+    db.from('participants').select('id,name').eq('session_id',sid),
+    db.from('responses').select('id,participant_id,slide_index,answer,created_at').eq('session_id',sid).order('created_at',{ascending:false})
+  ]);
+  if(p.error){toast('Teilnehmer konnten nicht geladen werden: '+p.error.message);return}
+  if(r.error){toast('Antworten konnten nicht geladen werden: '+r.error.message);return}
+  participantMap=new Map((p.data||[]).map(x=>[x.id,x.name||'Schüler']));
+  const rows=r.data||[];const currentIndex=currentSession.current_slide||0;const currentRows=rows.filter(x=>x.slide_index===currentIndex);
+  $('participantCount').textContent=p.data?.length||0;$('currentResponseCount').textContent=currentRows.length;
+  $('metricParticipants').textContent=p.data?.length||0;$('metricAnswers').textContent=rows.length;
+  $('metricRate').textContent=((p.data?.length?Math.round(currentRows.length/(p.data.length)*100):0))+'%';
+  $('lastUpdate').textContent='Aktualisiert '+new Date().toLocaleTimeString('de-DE');
+  renderLiveAnswers(currentRows,(currentSession.survey_snapshot||[])[currentIndex]||{});
+}
+function responseValue(r){return r?.answer?.value}
+function renderLiveAnswers(rows,f){
+  const root=$('answers');root.innerHTML='';
+  if(!rows.length){root.innerHTML='<div class="empty">Noch keine Antworten auf dieser Folie.</div>';return}
+  const type=f.type||'Offene Frage';
+  if(type==='Multiple-Choice')return renderChoiceResults(root,rows,f.options||[]);
+  if(type==='Skala')return renderScaleResults(root,rows,f.options||[]);
+  if(type==='Wortwolke')return renderWordCloud(root,rows);
+  if(type==='Ranking')return renderRankingResults(root,rows,f.options||[]);
+  if(type==='Offene Frage'||type==='Q&A'||type==='Pin setzen')return renderTextResults(root,rows);
+  return renderTextResults(root,rows);
+}
+function renderChoiceResults(root,rows,options){
+  const counts=new Map(options.map(o=>[o,0]));rows.forEach(r=>{const v=responseValue(r);counts.set(String(v), (counts.get(String(v))||0)+1)});
+  const max=Math.max(1,rows.length);root.innerHTML=options.map(o=>{const c=counts.get(o)||0;return '<div class="barRow"><div>'+esc(o)+'</div><div class="barTrack"><div class="barFill" style="width:'+Math.round(c/max*100)+'%"></div></div><div class="nowrap"><b>'+c+'</b> · '+Math.round(c/max*100)+'%</div></div>'}).join('');
+}
+function renderScaleResults(root,rows,options){
+  const n=Math.max(2,options.length||5);const counts=Array(n).fill(0);rows.forEach(r=>{const v=Number(responseValue(r));if(Number.isInteger(v)&&v>=1&&v<=n)counts[v-1]++});
+  root.innerHTML=counts.map((c,i)=>'<div class="barRow"><div><b>'+ (i+1) +'</b>'+(options[i]?' · '+esc(options[i]):'')+'</div><div class="barTrack"><div class="barFill" style="width:'+Math.round(c/Math.max(1,rows.length)*100)+'%"></div></div><div><b>'+c+'</b></div></div>').join('');
+}
+function renderWordCloud(root,rows){
+  const words=new Map();rows.forEach(r=>{const v=String(responseValue(r)||'').trim().toLowerCase();v.split(/[^\p{L}\p{N}äöüÄÖÜß'-]+/u).filter(w=>w.length>2).forEach(w=>words.set(w,(words.get(w)||0)+1))});
+  const stop=new Set('und oder der die das ein eine einer eines einem einen ich wir ihr sie er es ist sind war für von mit auf im in zu den dem des dass auch als sich nicht sehr aber wie'.split(' '));
+  const arr=[...words.entries()].filter(([w])=>!stop.has(w)).sort((a,b)=>b[1]-a[1]).slice(0,40);if(!arr.length){root.innerHTML='<div class="empty">Noch keine auswertbaren Wörter.</div>';return}
+  const max=arr[0][1],min=Math.max(1,arr[arr.length-1][1]);root.innerHTML='<div class="chipCloud">'+arr.map(([w,c])=>{const size=15+(c/max)*18;const opacity=.55+(c/max)*.45;return '<span class="chip" style="font-size:'+size.toFixed(0)+'px;opacity:'+opacity.toFixed(2)+'">'+esc(w)+' <small style="opacity:.7">'+c+'</small></span>'}).join('')+'</div>';
+}
+function renderTextResults(root,rows){root.innerHTML=rows.map(r=>'<div class="textAnswer" style="margin-bottom:10px"><div class="row" style="justify-content:space-between"><span class="name">'+esc(participantMap.get(r.participant_id)||'Schüler')+'</span><span class="time">'+new Date(r.created_at).toLocaleTimeString('de-DE')+'</span></div><div class="text">'+esc(String(responseValue(r)??''))+'</div></div>').join('')}
+function renderRankingResults(root,rows,options){
+  const pos=new Map(options.map(o=>[o,[]]));rows.forEach(r=>{const val=responseValue(r);if(Array.isArray(val))val.forEach((o,i)=>{if(pos.has(o))pos.get(o).push(i+1)})});
+  root.innerHTML=options.map((o)=>{const vals=pos.get(o)||[];const avg=vals.length?(vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(1):'–';return '<div class="rankRow"><div class="rankNo">'+esc(avg)+'</div><div>'+esc(o)+'</div><div class="subtle">'+vals.length+'x</div></div>'}).join('');
+}
+
 async function setSessionStatus(status){if(!currentSession)return;const patch={status,updated_at:new Date().toISOString()};if(status==='running'&&!currentSession.started_at)patch.started_at=new Date().toISOString();const {data,error}=await db.from('sessions').update(patch).eq('id',currentSession.id).select().single();if(error)toast('Session konnte nicht aktualisiert werden: '+error.message);else{currentSession=data;renderSession()}}
-async function move(delta){if(!currentSession)return;const max=(currentSession.survey_snapshot||[]).length-1;const next=Math.max(0,Math.min(max,(currentSession.current_slide||0)+delta));const {data,error}=await db.from('sessions').update({current_slide:next,updated_at:new Date().toISOString()}).eq('id',currentSession.id).select().single();if(error)toast('Folie konnte nicht geändert werden: '+error.message);else{currentSession=data;renderSession();refreshCounts()}}
-async function restartSession(){if(!currentSession)return;await db.from('responses').delete().eq('session_id',currentSession.id);const {data,error}=await db.from('sessions').update({current_slide:0,status:'running',updated_at:new Date().toISOString()}).eq('id',currentSession.id).select().single();if(error)toast(error.message);else{currentSession=data;renderSession();refreshCounts();toast('Session zurückgesetzt. Teilnehmer bleiben erhalten.')}}
-async function stopSession(){if(currentSession)await setSessionStatus('finished')}
-function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-$('loginForm').onsubmit=async e=>{e.preventDefault();$('loginMsg').textContent='Anmeldung …';const {error}=await db.auth.signInWithPassword({email:$('email').value,password:$('password').value});$('loginMsg').textContent=error?error.message:''};$('logoutBtn').onclick=()=>db.auth.signOut();$('newBtn').onclick=createSurvey;$('addSlideBtn').onclick=()=>addSlide();$('saveBtn').onclick=saveSurvey;$('startBtn').onclick=()=>currentSurvey&&startSurvey(currentSurvey.id);$('prevBtn').onclick=()=>move(-1);$('nextBtn').onclick=()=>move(1);$('restartBtn').onclick=restartSession;$('stopBtn').onclick=stopSession;
-db.auth.onAuthStateChange((_event,session)=>{setLoggedIn(session?.user||null);if(session?.user)loadSurveys()});
+async function move(delta){if(!currentSession||currentSession.status==='ended')return;const max=(currentSession.survey_snapshot||[]).length-1;const next=Math.max(0,Math.min(max,(currentSession.current_slide||0)+delta));const {data,error}=await db.from('sessions').update({current_slide:next,updated_at:new Date().toISOString()}).eq('id',currentSession.id).select().single();if(error)toast('Folie konnte nicht geändert werden: '+error.message);else{currentSession=data;renderSession();await refreshLiveData()}}
+async function restartSession(){if(!currentSession)return;if(!confirm('Alle bisherigen Antworten dieser Session löschen und wieder bei Folie 1 starten? Die Teilnehmer bleiben erhalten.'))return;const {error:de}=await db.from('responses').delete().eq('session_id',currentSession.id);if(de){toast('Antworten konnten nicht zurückgesetzt werden: '+de.message);return}const {data,error}=await db.from('sessions').update({current_slide:0,status:'running',updated_at:new Date().toISOString()}).eq('id',currentSession.id).select().single();if(error)toast(error.message);else{currentSession=data;renderSession();await refreshLiveData();toast('Session neu gestartet. Teilnehmer bleiben erhalten.')}}
+async function stopSession(){if(!currentSession)return;await setSessionStatus('ended');await refreshLiveData();toast('Session beendet. Die Schüler sehen jetzt den Abschluss.')}
+
+$('loginForm').onsubmit=async e=>{e.preventDefault();$('loginMsg').textContent='Anmeldung …';const {error}=await db.auth.signInWithPassword({email:$('email').value,password:$('password').value});$('loginMsg').textContent=error?error.message:''};
+$('logoutBtn').onclick=async()=>{await cleanupRealtime();await db.auth.signOut()};$('newBtn').onclick=createSurvey;$('addSlideBtn').onclick=()=>addSlide();$('saveBtn').onclick=saveSurvey;$('startBtn').onclick=()=>currentSurvey&&startSurvey(currentSurvey.id);$('prevBtn').onclick=()=>move(-1);$('nextBtn').onclick=()=>move(1);$('restartBtn').onclick=restartSession;$('stopBtn').onclick=stopSession;
+db.auth.onAuthStateChange((_event,session)=>{setLoggedIn(session?.user||null);if(session?.user)loadSurveys();else{$('sessionView').classList.add('hidden');cleanupRealtime()}});
 (async()=>{const {data}=await db.auth.getSession();setLoggedIn(data.session?.user||null);if(data.session?.user)await loadSurveys()})();
 </script>
 </body></html>
