@@ -4,9 +4,10 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>SchulUmfrage – Lehrerbereich</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
 :root{--bg:#0b1020;--panel:#151c31;--panel2:#10172a;--a:#7c5cff;--a2:#5d45cc;--t:#f5f7ff;--m:#9aa6c4;--l:#2b3757;--ok:#39d98a;--warn:#ffc857;--danger:#ff647c;--shadow:0 18px 50px #0004}
-*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(circle at 15% 10%,#1b2250 0,transparent 30%),linear-gradient(135deg,#0b1020,#111a31 55%,#17112d);color:var(--t);font:15px system-ui,sans-serif}.wrap{max-width:1280px;margin:auto;padding:24px}.top{display:flex;justify-content:space-between;gap:16px;align-items:center;margin-bottom:18px}.brand{font-size:28px;font-weight:900}.muted{color:var(--m)}.panel{background:#151c31ee;border:1px solid var(--l);border-radius:18px;padding:20px;box-shadow:var(--shadow)}.hidden{display:none!important}.btn{border:0;border-radius:10px;background:var(--a);color:#fff;font:inherit;font-weight:800;padding:10px 14px;cursor:pointer;transition:.15s}.btn:hover{background:var(--a2)}.btn.secondary{background:#263352}.btn.secondary:hover{background:#324166}.btn.danger{background:#572638}.btn:disabled{opacity:.5;cursor:not-allowed}.row{display:flex;gap:9px;align-items:center;flex-wrap:wrap}.field{display:grid;gap:6px;margin:12px 0}.field input,.field select,.field textarea{width:100%;border:1px solid var(--l);background:#0d1427;color:var(--t);border-radius:10px;padding:11px;font:inherit}.login{max-width:470px;margin:12vh auto}.grid{display:grid;grid-template-columns:300px 1fr;gap:18px}.list{display:grid;gap:9px}.survey,.slide,.answer{border:1px solid var(--l);border-radius:13px;padding:14px;background:var(--panel2)}.survey.active{outline:2px solid var(--a)}.slide{margin-top:12px}.badge{display:inline-block;padding:4px 8px;border-radius:99px;background:#29345a;font-size:11px;font-weight:800}.status{display:inline-flex;gap:7px;align-items:center}.dot{width:8px;height:8px;border-radius:50%;background:var(--ok)}.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}.three{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.liveCode{font-size:42px;font-weight:900;letter-spacing:6px;text-align:center;padding:14px 8px}.liveQuestion{font-size:30px;font-weight:900;line-height:1.18}.liveMeta{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.progress{height:8px;background:#212c49;border-radius:99px;overflow:hidden}.progress>span{display:block;height:100%;background:linear-gradient(90deg,var(--a),#a48dff);transition:width .25s}.metric{padding:14px;border-radius:13px;background:#10172a;border:1px solid var(--l)}.metric .value{font-size:28px;font-weight:900}.metric .label{font-size:12px;color:var(--m);margin-top:2px}.empty{padding:25px;text-align:center;color:var(--m);border:1px dashed var(--l);border-radius:13px}.barRow{display:grid;grid-template-columns:minmax(110px,180px) 1fr 60px;gap:10px;align-items:center;margin:10px 0}.barTrack{height:18px;border-radius:99px;background:#1e2843;overflow:hidden}.barFill{height:100%;background:linear-gradient(90deg,var(--a),#8f7bff);transition:width .35s}.chipCloud{display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap;padding:12px}.chip{display:inline-flex;align-items:center;padding:7px 11px;border-radius:999px;background:#263352;border:1px solid #344367}.textAnswer{padding:13px 14px;border:1px solid var(--l);border-radius:13px;background:#11192e}.textAnswer .name{font-weight:800}.textAnswer .time{font-size:12px;color:var(--m)}.textAnswer .text{margin-top:7px;line-height:1.45;white-space:pre-wrap;overflow-wrap:anywhere}.rankRow{display:grid;grid-template-columns:40px 1fr 60px;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid #202a45}.rankRow:last-child{border-bottom:0}.rankNo{font-size:20px;font-weight:900}.liveHeader{display:flex;align-items:end;justify-content:space-between;gap:16px}.liveActions{display:flex;gap:9px;flex-wrap:wrap;justify-content:flex-end}.toast{position:fixed;right:18px;bottom:18px;background:#202b49;border:1px solid var(--l);border-radius:12px;padding:12px 15px;box-shadow:0 12px 35px #0006;max-width:420px;z-index:50}.subtle{font-size:12px;color:var(--m)}.answerTitle{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:12px}.liveCard{padding:18px}.sessionPill{padding:6px 10px;border-radius:99px;background:#173b31;color:#8df0be;font-weight:800;font-size:12px}.sessionPill.ended{background:#402334;color:#ffb3c2}.nowrap{white-space:nowrap}@media(max-width:980px){.grid,.two,.three{grid-template-columns:1fr}.liveHeader{align-items:flex-start;flex-direction:column}.liveActions{justify-content:flex-start}}@media(max-width:700px){.wrap{padding:14px}.liveQuestion{font-size:24px}.liveCode{font-size:34px}.barRow{grid-template-columns:90px 1fr 42px}}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(circle at 15% 10%,#1b2250 0,transparent 30%),linear-gradient(135deg,#0b1020,#111a31 55%,#17112d);color:var(--t);font:15px system-ui,sans-serif}.wrap{max-width:1280px;margin:auto;padding:24px}.top{display:flex;justify-content:space-between;gap:16px;align-items:center;margin-bottom:18px}.brand{font-size:28px;font-weight:900}.muted{color:var(--m)}.panel{background:#151c31ee;border:1px solid var(--l);border-radius:18px;padding:20px;box-shadow:var(--shadow)}.hidden{display:none!important}.btn{border:0;border-radius:10px;background:var(--a);color:#fff;font:inherit;font-weight:800;padding:10px 14px;cursor:pointer;transition:.15s}.btn:hover{background:var(--a2)}.btn.secondary{background:#263352}.btn.secondary:hover{background:#324166}.btn.danger{background:#572638}.btn:disabled{opacity:.5;cursor:not-allowed}.row{display:flex;gap:9px;align-items:center;flex-wrap:wrap}.field{display:grid;gap:6px;margin:12px 0}.field input,.field select,.field textarea{width:100%;border:1px solid var(--l);background:#0d1427;color:var(--t);border-radius:10px;padding:11px;font:inherit}.login{max-width:470px;margin:12vh auto}.grid{display:grid;grid-template-columns:300px 1fr;gap:18px}.list{display:grid;gap:9px}.survey,.slide,.answer{border:1px solid var(--l);border-radius:13px;padding:14px;background:var(--panel2)}.survey.active{outline:2px solid var(--a)}.slide{margin-top:12px}.badge{display:inline-block;padding:4px 8px;border-radius:99px;background:#29345a;font-size:11px;font-weight:800}.status{display:inline-flex;gap:7px;align-items:center}.dot{width:8px;height:8px;border-radius:50%;background:var(--ok)}.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}.three{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.liveCode{font-size:42px;font-weight:900;letter-spacing:6px;text-align:center;padding:14px 8px}.liveQuestion{font-size:30px;font-weight:900;line-height:1.18}.liveMeta{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.progress{height:8px;background:#212c49;border-radius:99px;overflow:hidden}.progress>span{display:block;height:100%;background:linear-gradient(90deg,var(--a),#a48dff);transition:width .25s}.metric{padding:14px;border-radius:13px;background:#10172a;border:1px solid var(--l)}.metric .value{font-size:28px;font-weight:900}.metric .label{font-size:12px;color:var(--m);margin-top:2px}.empty{padding:25px;text-align:center;color:var(--m);border:1px dashed var(--l);border-radius:13px}.barRow{display:grid;grid-template-columns:minmax(110px,180px) 1fr 60px;gap:10px;align-items:center;margin:10px 0}.barTrack{height:18px;border-radius:99px;background:#1e2843;overflow:hidden}.barFill{height:100%;background:linear-gradient(90deg,var(--a),#8f7bff);transition:width .35s}.chipCloud{display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap;padding:12px}.chip{display:inline-flex;align-items:center;padding:7px 11px;border-radius:999px;background:#263352;border:1px solid #344367}.textAnswer{padding:13px 14px;border:1px solid var(--l);border-radius:13px;background:#11192e}.textAnswer .name{font-weight:800}.textAnswer .time{font-size:12px;color:var(--m)}.textAnswer .text{margin-top:7px;line-height:1.45;white-space:pre-wrap;overflow-wrap:anywhere}.rankRow{display:grid;grid-template-columns:40px 1fr 60px;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid #202a45}.rankRow:last-child{border-bottom:0}.rankNo{font-size:20px;font-weight:900}.liveHeader{display:flex;align-items:end;justify-content:space-between;gap:16px}.liveActions{display:flex;gap:9px;flex-wrap:wrap;justify-content:flex-end}.toast{position:fixed;right:18px;bottom:18px;background:#202b49;border:1px solid var(--l);border-radius:12px;padding:12px 15px;box-shadow:0 12px 35px #0006;max-width:420px;z-index:50}.subtle{font-size:12px;color:var(--m)}.answerTitle{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:12px}.liveCard{padding:18px}.sessionPill{padding:6px 10px;border-radius:99px;background:#173b31;color:#8df0be;font-weight:800;font-size:12px}.sessionPill.ended{background:#402334;color:#ffb3c2}.nowrap{white-space:nowrap}.accessActions{display:flex;gap:9px;flex-wrap:wrap}.accessBtn{min-width:180px}.modalBackdrop{position:fixed;inset:0;background:#050816bb;backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:18px;z-index:100}.modal{width:min(520px,100%);background:#151c31;border:1px solid var(--l);border-radius:20px;box-shadow:0 25px 80px #0008;padding:24px;position:relative}.modal h2{margin:0 0 8px}.modalClose{position:absolute;right:12px;top:12px;width:38px;height:38px;border-radius:50%;border:1px solid var(--l);background:#202b49;color:var(--t);font-size:22px;cursor:pointer}.modalClose:hover{background:#2d3a5e}.codeModalValue{font-size:56px;letter-spacing:8px;font-weight:1000;text-align:center;padding:25px 10px 15px}.qrBox{display:flex;align-items:center;justify-content:center;background:#fff;padding:18px;border-radius:16px;margin:18px auto;min-height:300px;width:min(340px,100%)}.qrBox canvas,.qrBox img{display:block;max-width:100%;height:auto}.modalHint{text-align:center;color:var(--m);line-height:1.45}.modalActions{display:flex;justify-content:center;gap:9px;flex-wrap:wrap;margin-top:14px}@media(max-width:980px){.grid,.two,.three{grid-template-columns:1fr}.liveHeader{align-items:flex-start;flex-direction:column}.liveActions{justify-content:flex-start}}@media(max-width:700px){.wrap{padding:14px}.liveQuestion{font-size:24px}.liveCode{font-size:34px}.barRow{grid-template-columns:90px 1fr 42px}}
 </style>
 </head>
 <body>
@@ -40,7 +41,7 @@
             <div>
               <div class="liveMeta"><span class="badge">LIVE</span><span id="sessionPill" class="sessionPill">LÄUFT</span></div>
               <h1 id="sessionTitle">Umfrage läuft</h1>
-              <div class="muted">Code <b id="topJoinCode">------</b> · <span id="participantCount">0</span> Teilnehmer · <span id="currentResponseCount">0</span> Antworten auf dieser Folie</div>
+              <div class="muted"><span id="participantCount">0</span> Teilnehmer · <span id="currentResponseCount">0</span> Antworten auf dieser Folie</div>
             </div>
             <div class="liveActions"><button id="restartBtn" class="btn secondary">↻ Neu starten</button><button id="stopBtn" class="btn danger">■ Beenden</button></div>
           </div>
@@ -53,9 +54,13 @@
 
           <div class="two" style="margin-top:16px">
             <div class="panel liveCard">
-              <div class="muted">Teilnahmecode</div>
-              <div id="joinCode" class="liveCode">------</div>
-              <div class="muted" style="text-align:center">Schülerseite: <span class="nowrap">student.html</span></div>
+              <div class="muted">Schüler-Zugang</div>
+              <h2 style="margin:6px 0 8px">Zugang anzeigen</h2>
+              <p class="muted" style="margin-top:0">Teilnahmecode und QR-Code bleiben ausgeblendet und werden nur bei Bedarf als Fenster geöffnet.</p>
+              <div class="accessActions" style="margin-top:18px">
+                <button id="showCodeBtn" class="btn accessBtn">🔢 Teilnahmecode anzeigen</button>
+                <button id="showQrBtn" class="btn secondary accessBtn">▦ QR-Code anzeigen</button>
+              </div>
             </div>
             <div class="panel liveCard">
               <div class="row" style="justify-content:space-between"><div><div class="muted">Aktuelle Folie</div><div><b id="slideIndicator">1 / 1</b></div></div><div class="subtle" id="liveType">Multiple-Choice</div></div>
@@ -73,6 +78,13 @@
       </main>
     </div>
   </section>
+</div>
+<div id="accessModal" class="modalBackdrop hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal">
+    <button id="modalClose" class="modalClose" aria-label="Fenster schließen">×</button>
+    <h2 id="modalTitle">Zugang</h2>
+    <div id="modalBody"></div>
+  </div>
 </div>
 <div id="toast" class="toast hidden"></div>
 <script>
@@ -126,7 +138,7 @@ async function refreshSession(){if(!currentSession)return;const {data,error}=awa
 function renderSession(){
   if(!currentSession)return;
   const slides=currentSession.survey_snapshot||[], i=currentSession.current_slide||0, f=slides[i]||{};
-  $('joinCode').textContent=currentSession.join_code||'------';$('topJoinCode').textContent=currentSession.join_code||'------';$('liveQuestion').textContent=f.question||'Keine Frage';$('liveType').textContent=f.type||'';
+  $('liveQuestion').textContent=f.question||'Keine Frage';$('liveType').textContent=f.type||'';
   $('slideIndicator').textContent=(slides.length?i+1:0)+' / '+slides.length;
   $('slideProgress').style.width=(slides.length?((i+1)/slides.length*100):0)+'%';
   $('prevBtn').disabled=i<=0||currentSession.status==='ended';$('nextBtn').disabled=i>=slides.length-1||currentSession.status==='ended';
@@ -182,13 +194,34 @@ function renderRankingResults(root,rows,options){
   root.innerHTML=options.map((o)=>{const vals=pos.get(o)||[];const avg=vals.length?(vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(1):'–';return '<div class="rankRow"><div class="rankNo">'+esc(avg)+'</div><div>'+esc(o)+'</div><div class="subtle">'+vals.length+'x</div></div>'}).join('');
 }
 
+function closeAccessModal(){$('accessModal').classList.add('hidden');$('modalBody').innerHTML=''}
+function openCodeModal(){
+  if(!currentSession)return;
+  $('modalTitle').textContent='Teilnahmecode';
+  $('modalBody').innerHTML='<p class="modalHint">Die Schüler geben diesen Code auf der Schülerseite ein.</p><div class="codeModalValue">'+esc(currentSession.join_code||'------')+'</div><div class="modalHint">Schülerseite: <span class="nowrap">student.html</span></div>';
+  $('accessModal').classList.remove('hidden');
+}
+function openQrModal(){
+  if(!currentSession)return;
+  const studentUrl=new URL('student.html',window.location.href).href;
+  $('modalTitle').textContent='QR-Code zum Beitreten';
+  $('modalBody').innerHTML='<div class="qrBox" id="qrBox"></div><p class="modalHint">Die Schüler scannen den Code mit der Smartphone-Kamera und gelangen direkt zur Schülerseite.</p><div class="modalHint" style="margin-top:8px"><b>Code:</b> '+esc(currentSession.join_code||'------')+'</div>';
+  $('accessModal').classList.remove('hidden');
+  const box=$('qrBox');
+  if(typeof QRCode==='undefined'){
+    box.innerHTML='<div class="modalHint">Der QR-Code konnte nicht geladen werden.<br>Öffne stattdessen <b>'+esc(studentUrl)+'</b></div>';
+    return;
+  }
+  new QRCode(box,{text:studentUrl,width:280,height:280,correctLevel:QRCode.CorrectLevel.H});
+}
+
 async function setSessionStatus(status){if(!currentSession)return;const patch={status,updated_at:new Date().toISOString()};if(status==='running'&&!currentSession.started_at)patch.started_at=new Date().toISOString();const {data,error}=await db.from('sessions').update(patch).eq('id',currentSession.id).select().single();if(error)toast('Session konnte nicht aktualisiert werden: '+error.message);else{currentSession=data;renderSession()}}
 async function move(delta){if(!currentSession||currentSession.status==='ended')return;const max=(currentSession.survey_snapshot||[]).length-1;const next=Math.max(0,Math.min(max,(currentSession.current_slide||0)+delta));const {data,error}=await db.from('sessions').update({current_slide:next,updated_at:new Date().toISOString()}).eq('id',currentSession.id).select().single();if(error)toast('Folie konnte nicht geändert werden: '+error.message);else{currentSession=data;renderSession();await refreshLiveData()}}
 async function restartSession(){if(!currentSession)return;if(!confirm('Alle bisherigen Antworten dieser Session löschen und wieder bei Folie 1 starten? Die Teilnehmer bleiben erhalten.'))return;const {error:de}=await db.from('responses').delete().eq('session_id',currentSession.id);if(de){toast('Antworten konnten nicht zurückgesetzt werden: '+de.message);return}const {data,error}=await db.from('sessions').update({current_slide:0,status:'running',updated_at:new Date().toISOString()}).eq('id',currentSession.id).select().single();if(error)toast(error.message);else{currentSession=data;renderSession();await refreshLiveData();toast('Session neu gestartet. Teilnehmer bleiben erhalten.')}}
 async function stopSession(){if(!currentSession)return;await setSessionStatus('ended');await refreshLiveData();toast('Session beendet. Die Schüler sehen jetzt den Abschluss.')}
 
 $('loginForm').onsubmit=async e=>{e.preventDefault();$('loginMsg').textContent='Anmeldung …';const {error}=await db.auth.signInWithPassword({email:$('email').value,password:$('password').value});$('loginMsg').textContent=error?error.message:''};
-$('logoutBtn').onclick=async()=>{await cleanupRealtime();await db.auth.signOut()};$('newBtn').onclick=createSurvey;$('addSlideBtn').onclick=()=>addSlide();$('saveBtn').onclick=saveSurvey;$('startBtn').onclick=()=>currentSurvey&&startSurvey(currentSurvey.id);$('prevBtn').onclick=()=>move(-1);$('nextBtn').onclick=()=>move(1);$('restartBtn').onclick=restartSession;$('stopBtn').onclick=stopSession;
+$('logoutBtn').onclick=async()=>{closeAccessModal();await cleanupRealtime();await db.auth.signOut()};$('newBtn').onclick=createSurvey;$('addSlideBtn').onclick=()=>addSlide();$('saveBtn').onclick=saveSurvey;$('startBtn').onclick=()=>currentSurvey&&startSurvey(currentSurvey.id);$('prevBtn').onclick=()=>move(-1);$('nextBtn').onclick=()=>move(1);$('restartBtn').onclick=restartSession;$('stopBtn').onclick=stopSession;$('showCodeBtn').onclick=openCodeModal;$('showQrBtn').onclick=openQrModal;$('modalClose').onclick=closeAccessModal;$('accessModal').onclick=e=>{if(e.target.id==='accessModal')closeAccessModal()};document.addEventListener('keydown',e=>{if(e.key==='Escape')closeAccessModal()});
 db.auth.onAuthStateChange((_event,session)=>{setLoggedIn(session?.user||null);if(session?.user)loadSurveys();else{$('sessionView').classList.add('hidden');cleanupRealtime()}});
 (async()=>{const {data}=await db.auth.getSession();setLoggedIn(data.session?.user||null);if(data.session?.user)await loadSurveys()})();
 </script>
