@@ -1,92 +1,86 @@
-<!doctype html>
+<!DOCTYPE html>
+
 <html lang="de">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/>
 <title>SchulUmfrage – Lehrerbereich</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-<style>
-:root{--bg:#0b1020;--panel:#151c31;--panel2:#10172a;--a:#7c5cff;--a2:#5d45cc;--t:#f5f7ff;--m:#9aa6c4;--l:#2b3757;--ok:#39d98a;--warn:#ffc857;--danger:#ff647c;--shadow:0 18px 50px #0004}
-*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(circle at 15% 10%,#1b2250 0,transparent 30%),linear-gradient(135deg,#0b1020,#111a31 55%,#17112d);color:var(--t);font:15px system-ui,sans-serif}.wrap{max-width:1280px;margin:auto;padding:24px}.top{display:flex;justify-content:space-between;gap:16px;align-items:center;margin-bottom:18px}.brand{font-size:28px;font-weight:900}.muted{color:var(--m)}.panel{background:#151c31ee;border:1px solid var(--l);border-radius:18px;padding:20px;box-shadow:var(--shadow)}.hidden{display:none!important}.btn{border:0;border-radius:10px;background:var(--a);color:#fff;font:inherit;font-weight:800;padding:10px 14px;cursor:pointer;transition:.15s}.btn:hover{background:var(--a2)}.btn.secondary{background:#263352}.btn.secondary:hover{background:#324166}.btn.danger{background:#572638}.btn:disabled{opacity:.5;cursor:not-allowed}.row{display:flex;gap:9px;align-items:center;flex-wrap:wrap}.field{display:grid;gap:6px;margin:12px 0}.field input,.field select,.field textarea{width:100%;border:1px solid var(--l);background:#0d1427;color:var(--t);border-radius:10px;padding:11px;font:inherit}.login{max-width:470px;margin:12vh auto}.grid{display:grid;grid-template-columns:300px 1fr;gap:18px}.list{display:grid;gap:9px}.survey,.slide,.answer{border:1px solid var(--l);border-radius:13px;padding:14px;background:var(--panel2)}.survey.active{outline:2px solid var(--a)}.slide{margin-top:12px}.badge{display:inline-block;padding:4px 8px;border-radius:99px;background:#29345a;font-size:11px;font-weight:800}.status{display:inline-flex;gap:7px;align-items:center}.dot{width:8px;height:8px;border-radius:50%;background:var(--ok)}.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}.three{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.liveCode{font-size:42px;font-weight:900;letter-spacing:6px;text-align:center;padding:14px 8px}.liveQuestion{font-size:30px;font-weight:900;line-height:1.18}.liveMeta{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.progress{height:8px;background:#212c49;border-radius:99px;overflow:hidden}.progress>span{display:block;height:100%;background:linear-gradient(90deg,var(--a),#a48dff);transition:width .25s}.metric{padding:14px;border-radius:13px;background:#10172a;border:1px solid var(--l)}.metric .value{font-size:28px;font-weight:900}.metric .label{font-size:12px;color:var(--m);margin-top:2px}.empty{padding:25px;text-align:center;color:var(--m);border:1px dashed var(--l);border-radius:13px}.barRow{display:grid;grid-template-columns:minmax(110px,180px) 1fr 60px;gap:10px;align-items:center;margin:10px 0}.barTrack{height:18px;border-radius:99px;background:#1e2843;overflow:hidden}.barFill{height:100%;background:linear-gradient(90deg,var(--a),#8f7bff);transition:width .35s}.chipCloud{display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap;padding:12px}.chip{display:inline-flex;align-items:center;padding:7px 11px;border-radius:999px;background:#263352;border:1px solid #344367}.textAnswer{padding:13px 14px;border:1px solid var(--l);border-radius:13px;background:#11192e}.textAnswer .name{font-weight:800}.textAnswer .time{font-size:12px;color:var(--m)}.textAnswer .text{margin-top:7px;line-height:1.45;white-space:pre-wrap;overflow-wrap:anywhere}.pinBoard{position:relative;height:320px;border:1px solid var(--l);border-radius:16px;background:linear-gradient(#14213b,#10172a);overflow:hidden;cursor:crosshair}.pinBoard:before{content:"";position:absolute;inset:0;background-image:linear-gradient(#ffffff12 1px,transparent 1px),linear-gradient(90deg,#ffffff12 1px,transparent 1px);background-size:10% 20%}.livePin{position:absolute;width:18px;height:18px;border-radius:50%;background:var(--danger);border:3px solid #fff;transform:translate(-50%,-50%);box-shadow:0 3px 12px #0008}.pinLegend{position:absolute;left:10px;bottom:10px;padding:6px 9px;border-radius:9px;background:#0b1020cc;color:var(--m);font-size:12px}.rankRow{display:grid;grid-template-columns:40px 1fr 60px;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid #202a45}.rankRow:last-child{border-bottom:0}.rankNo{font-size:20px;font-weight:900}.liveHeader{display:flex;align-items:end;justify-content:space-between;gap:16px}.liveActions{display:flex;gap:9px;flex-wrap:wrap;justify-content:flex-end}.toast{position:fixed;right:18px;bottom:18px;background:#202b49;border:1px solid var(--l);border-radius:12px;padding:12px 15px;box-shadow:0 12px 35px #0006;max-width:420px;z-index:50}.subtle{font-size:12px;color:var(--m)}.answerTitle{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:12px}.liveCard{padding:18px}.sessionPill{padding:6px 10px;border-radius:99px;background:#173b31;color:#8df0be;font-weight:800;font-size:12px}.sessionPill.ended{background:#402334;color:#ffb3c2}.nowrap{white-space:nowrap}.accessActions{display:flex;gap:9px;flex-wrap:wrap}.accessBtn{min-width:180px}.modalBackdrop{position:fixed;inset:0;background:#050816bb;backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:18px;z-index:100}.modal{width:min(520px,100%);background:#151c31;border:1px solid var(--l);border-radius:20px;box-shadow:0 25px 80px #0008;padding:24px;position:relative}.modal h2{margin:0 0 8px}.modalClose{position:absolute;right:12px;top:12px;width:38px;height:38px;border-radius:50%;border:1px solid var(--l);background:#202b49;color:var(--t);font-size:22px;cursor:pointer}.modalClose:hover{background:#2d3a5e}.codeModalValue{font-size:56px;letter-spacing:8px;font-weight:1000;text-align:center;padding:25px 10px 15px}.qrBox{display:flex;align-items:center;justify-content:center;background:#fff;padding:18px;border-radius:16px;margin:18px auto;min-height:300px;width:min(340px,100%)}.qrBox canvas,.qrBox img{display:block;max-width:100%;height:auto}.modalHint{text-align:center;color:var(--m);line-height:1.45}.modalActions{display:flex;justify-content:center;gap:9px;flex-wrap:wrap;margin-top:14px}@media(max-width:980px){.grid,.two,.three{grid-template-columns:1fr}.liveHeader{align-items:flex-start;flex-direction:column}.liveActions{justify-content:flex-start}}@media(max-width:700px){.wrap{padding:14px}.liveQuestion{font-size:24px}.liveCode{font-size:34px}.barRow{grid-template-columns:90px 1fr 42px}}
+<style>:root{--bg:#f1efe6;--surface:#f4f2e9;--surface-2:#ece8dc;--line:#93856a;--line-soft:#afa48f;--text:#5c5547;--muted:#90836b;--accent:#918469;--accent-dark:#6e624e;--danger:#ef726b;--ok:#22a867;--shadow:none}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:"Avenir Next",Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}body{min-height:100vh}.wrap{max-width:none;margin:0;padding:26px 12px 32px}.top{display:flex;justify-content:space-between;gap:16px;align-items:center;margin:0 10px 16px 10px;min-height:54px}.top>div:first-child .brand{display:none}.top>div:first-child .muted{font-size:17px;color:var(--muted)}.brand{font-weight:700}.muted{color:var(--muted)}.panel{background:transparent;border:2px solid var(--line);border-radius:26px;padding:16px;box-shadow:none}.hidden{display:none!important}.btn{border:2px solid var(--line);border-radius:7px;background:rgba(246,244,236,.6);color:var(--muted);font:inherit;font-weight:500;padding:8px 13px;cursor:pointer;transition:.15s}.btn:hover{background:#e9e5d8;color:var(--accent-dark)}.btn:focus-visible{outline:2px solid var(--accent-dark);outline-offset:2px}.btn.secondary{background:rgba(246,244,236,.6);color:var(--muted)}.btn.secondary:hover{background:#e9e5d8}.btn.danger{background:var(--danger);border-color:var(--danger);color:#fff}.btn:disabled{opacity:.45;cursor:not-allowed}.row{display:flex;gap:9px;align-items:center;flex-wrap:wrap}.field{display:grid;gap:7px;margin:13px 0}.field label{color:var(--muted)}.field input,.field select,.field textarea{width:100%;border:2px solid var(--line);background:rgba(246,244,236,.56);color:var(--text);border-radius:8px;padding:10px 11px;font:inherit}.login{width:min(520px,100%);margin:13vh auto}.login h1{font-size:34px;font-weight:500;margin:12px 0 8px}.grid{display:grid;grid-template-columns:260px minmax(0,1fr);gap:29px;align-items:stretch}.grid>aside{min-height:800px;padding:19px 14px}.grid>main{min-width:0}.list{display:grid;gap:9px;margin-top:19px}.grid aside h2{font-size:30px;line-height:1;margin:4px 0 0;font-weight:500;color:var(--muted)}.grid aside .row:first-child{justify-content:space-between}.grid aside #newBtn{width:37px;height:37px;padding:0;border:0;border-radius:7px;background:var(--accent);color:#fff;font-size:24px;line-height:1}.survey,.slide,.answer{border:2px solid var(--line);border-radius:11px;padding:10px;background:rgba(247,244,234,.55)}.survey{display:grid;grid-template-columns:1fr 126px;grid-template-rows:auto auto;column-gap:9px;align-items:start}.survey>b{grid-column:1;font-size:16px;font-weight:500;color:var(--muted)}.survey>.muted{grid-column:1;font-size:13px}.survey>.row{grid-column:2;grid-row:1 / span 2;flex-direction:column;align-items:stretch;gap:5px}.survey>.row .btn{width:100%;padding:7px 6px}.survey.active{outline:2px solid var(--accent);outline-offset:1px}.editorView{min-height:800px;padding:0}.editorView>.row{padding:18px 24px 8px;align-items:center}.editorView h1{font-size:30px;font-weight:500;margin:7px 0 0;color:var(--muted)}.editorView>.row .badge{display:none}.badge{display:inline-block;padding:5px 9px;border-radius:99px;background:#ddd6c4;color:var(--muted);font-size:11px;font-weight:700}.empty{padding:25px;text-align:center;color:var(--muted);border:0;border-radius:0;min-height:650px;display:grid;place-items:center;font-size:24px}.editorView #editorForm{padding:10px 24px 24px}.editorView #editorForm>.field{max-width:680px}.slide{margin-top:12px}.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}.three{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.status{display:inline-flex;gap:7px;align-items:center}.dot{width:9px;height:9px;border-radius:50%;background:var(--ok);display:inline-block}.progress{height:6px;background:#ded8c9;border-radius:99px;overflow:hidden}.progress>span{display:block;height:100%;background:var(--accent);transition:width .25s}.metric{padding:16px 15px;border:2px solid var(--line);border-radius:12px;background:rgba(242,239,228,.78)}.metric .value{font-size:28px;font-weight:650;color:var(--accent-dark)}.metric .label{font-size:15px;color:var(--muted);margin-top:1px}.liveQuestion{font-size:31px;font-weight:500;line-height:1.2;color:var(--muted)}.liveMeta{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.liveHeader{display:flex;align-items:center;justify-content:space-between;gap:16px}.liveActions{display:flex;gap:9px;flex-wrap:wrap;justify-content:flex-end}.sessionPill{padding:6px 10px;border-radius:99px;background:#dfe9df;color:#3f7658;font-weight:700;font-size:12px}.sessionPill.ended{background:#eed9d7;color:#a34c46}.subtle{font-size:13px;color:var(--muted)}.answerTitle{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:10px}.liveCard{padding:0;border:0;background:transparent}.accessActions{display:flex;gap:9px;flex-wrap:wrap}.accessBtn{min-width:180px}.barRow{display:grid;grid-template-columns:minmax(100px,180px) 1fr 70px;gap:10px;align-items:center;margin:9px 0}.barTrack{height:15px;border-radius:99px;background:#ded8ca;overflow:hidden}.barFill{height:100%;background:var(--accent);transition:width .35s}.chipCloud{display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap;padding:10px}.chip{display:inline-flex;align-items:center;padding:6px 11px;border-radius:999px;background:#e6e0d2;border:2px solid var(--line-soft);color:var(--text)}.textAnswer{padding:12px 14px;border:2px solid var(--line);border-radius:10px;background:rgba(247,244,234,.6)}.textAnswer .name{font-weight:700}.textAnswer .time{font-size:12px;color:var(--muted)}.textAnswer .text{margin-top:7px;line-height:1.45;white-space:pre-wrap;overflow-wrap:anywhere}.pinBoard{position:relative;height:320px;border:2px solid var(--line);border-radius:14px;background:#ece8dd;overflow:hidden;cursor:crosshair}.pinBoard:before{content:"";position:absolute;inset:0;background-image:linear-gradient(#92856a24 1px,transparent 1px),linear-gradient(90deg,#92856a24 1px,transparent 1px);background-size:10% 20%}.livePin{position:absolute;width:18px;height:18px;border-radius:50%;background:var(--danger);border:3px solid #fff;transform:translate(-50%,-50%);box-shadow:0 2px 8px rgba(70,60,40,.35)}.pinLegend{position:absolute;left:10px;bottom:10px;padding:6px 9px;border-radius:8px;background:rgba(247,244,234,.9);color:var(--muted);font-size:12px}.rankRow{display:grid;grid-template-columns:40px 1fr 60px;gap:10px;align-items:center;padding:10px 0;border-bottom:2px solid #ded8ca}.rankRow:last-child{border-bottom:0}.rankNo{font-size:20px;font-weight:900}.modalBackdrop{position:fixed;inset:0;background:rgba(74,66,53,.24);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:18px;z-index:100}.modal{width:min(520px,100%);background:var(--bg);border:2px solid var(--line);border-radius:24px;box-shadow:none;padding:24px;position:relative}.modal h2{margin:0 0 8px;font-size:28px;font-weight:500;color:var(--muted)}.modalClose{position:absolute;right:10px;top:10px;width:36px;height:36px;border-radius:7px;border:2px solid var(--line);background:transparent;color:var(--muted);font-size:22px;cursor:pointer}.codeModalValue{font-size:56px;letter-spacing:8px;font-weight:750;text-align:center;padding:25px 10px 15px;color:var(--accent-dark)}.qrBox{display:flex;align-items:center;justify-content:center;background:#fff;padding:18px;border-radius:12px;margin:18px auto;min-height:300px;width:min(340px,100%)}.qrBox canvas,.qrBox img{display:block;max-width:100%;height:auto}.modalHint{text-align:center;color:var(--muted);line-height:1.45}.modalActions{display:flex;justify-content:center;gap:9px;flex-wrap:wrap;margin-top:14px}.compatHidden{display:none!important}.toast{position:fixed;right:18px;bottom:18px;background:#efebe0;border:2px solid var(--line);border-radius:10px;padding:12px 15px;max-width:420px;z-index:50;color:var(--text)}
+#sessionView{min-height:800px;padding:0;overflow:hidden}#sessionView .sessionHeader{padding:17px 20px 10px;border-bottom:0}#sessionView .sessionHeader .sessionTitle{font-size:27px;font-weight:500;color:var(--muted)}#sessionView .sessionHeader .liveActions .accessBtn{min-width:170px}#sessionView .liveShell{display:grid;grid-template-columns:minmax(0,1fr) 188px;gap:20px;padding:0 20px 18px}#sessionView .liveMainCard{min-height:690px;border:2px solid var(--line);border-radius:12px;padding:12px 10px 10px;display:flex;flex-direction:column}#sessionView .questionHeader{display:grid;grid-template-columns:145px minmax(0,1fr) 145px;gap:10px;align-items:start;margin-bottom:8px}#sessionView #prevBtn,#sessionView #nextBtn{padding:8px 13px}#sessionView #liveQuestion{text-align:left;padding:0 12px;font-size:31px;min-height:50px}#sessionView #liveOptions{display:grid;gap:8px;margin:3px auto 16px;width:min(78%,620px)}#sessionView .liveOption{border:2px solid var(--line);border-radius:7px;padding:6px 9px;color:var(--muted);background:rgba(246,244,236,.35);font-size:17px}#sessionView .liveOptionsPlaceholder{min-height:4px}#sessionView .liveAnswersPanel{border:2px solid var(--line);border-radius:10px;padding:12px 12px 14px;flex:1;min-height:270px;overflow:auto;background:rgba(244,241,231,.35)}#sessionView .liveAnswersPanel h2{margin:0 0 2px;font-size:25px;font-weight:550;color:var(--muted)}#sessionView .liveAnswersPanel .muted{font-size:13px}#sessionView #answers{margin-top:10px}#sessionView .metricStack{display:flex;flex-direction:column;gap:13px;padding-top:2px}#sessionView .metricStack .metric{min-height:86px}#sessionView .slideMetricValue{font-size:26px;font-weight:650;color:var(--accent-dark)}#sessionView .slideMetricLabel{font-size:15px;color:var(--muted);margin-top:1px}#sessionView .three,#sessionView .two,#sessionView .liveHeader,#sessionView .liveActionsOld{display:none!important}#participantCount,#currentResponseCount,#metricAnswers,#liveType,#sessionPill,#lastUpdate{display:none}
+@media(max-width:980px){.wrap{padding:20px 10px 26px}.grid{grid-template-columns:1fr}.grid>aside{min-height:auto}.editorView,.grid>aside,#sessionView{min-height:0}.survey{grid-template-columns:1fr 140px}.empty{min-height:380px}.liveShell{grid-template-columns:1fr!important}.metricStack{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));padding-bottom:8px!important}.liveMainCard{min-height:560px!important}}@media(max-width:700px){.top{align-items:flex-start;flex-direction:column;margin:0 4px 12px}.top>div:first-child .muted{font-size:15px}.grid{gap:12px}.survey{grid-template-columns:1fr 115px}.editorView>.row{padding:14px 16px}.editorView h1{font-size:24px}.empty{font-size:19px;min-height:260px}.liveShell{padding:0 10px 10px!important}.metricStack{grid-template-columns:1fr!important}.questionHeader{grid-template-columns:1fr!important}.questionHeader #liveQuestion{order:-1;font-size:25px;text-align:center}.liveOption{font-size:15px!important}.liveAnswersPanel{min-height:220px!important}.sessionHeader{padding:12px 12px 8px!important}}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <header class="top">
-    <div><div class="brand">SchulUmfrage</div><div class="muted">Lehrerbereich · Live-Moderation</div></div>
-    <div class="row"><span id="connection" class="status muted"><span class="dot"></span> Verbinde …</span><button id="logoutBtn" class="btn secondary hidden">Abmelden</button></div>
-  </header>
-
-  <section id="loginView" class="panel login">
-    <span class="badge">GESCHÜTZTER LEHRERBEREICH</span><h1>Anmelden</h1>
-    <p class="muted">Melde dich mit deinem Supabase-Lehrerkonto an.</p>
-    <form id="loginForm"><div class="field"><label>E-Mail</label><input id="email" type="email" required autocomplete="username"></div><div class="field"><label>Passwort</label><input id="password" type="password" required autocomplete="current-password"></div><button class="btn" type="submit">Anmelden</button></form><p id="loginMsg" class="muted"></p>
-  </section>
-
-  <section id="appView" class="hidden">
-    <div class="grid">
-      <aside class="panel">
-        <div class="row" style="justify-content:space-between"><h2>Umfragen</h2><button id="newBtn" class="btn">＋</button></div>
-        <div id="surveyList" class="list"></div>
-      </aside>
-      <main>
-        <section id="editorView" class="panel">
-          <div class="row" style="justify-content:space-between"><div><span class="badge">EDITOR</span><h1 id="editorTitle">Umfrage auswählen</h1></div><div class="row"><button id="saveBtn" class="btn secondary" disabled>Speichern</button><button id="startBtn" class="btn" disabled>▶ Starten</button></div></div>
-          <div id="editorEmpty" class="empty">Erstelle eine neue Umfrage oder wähle links eine vorhandene Umfrage aus.</div>
-          <div id="editorForm" class="hidden"><div class="field"><label>Umfrage-Name</label><input id="surveyName"></div><div id="slides"></div><button id="addSlideBtn" class="btn secondary">＋ Folie hinzufügen</button></div>
-        </section>
-
-        <section id="sessionView" class="panel hidden" style="margin-top:18px">
-          <div class="liveHeader">
-            <div>
-              <div class="liveMeta"><span class="badge">LIVE</span><span id="sessionPill" class="sessionPill">LÄUFT</span></div>
-              <h1 id="sessionTitle">Umfrage läuft</h1>
-              <div class="muted"><span id="participantCount">0</span> Teilnehmer · <span id="currentResponseCount">0</span> Antworten auf dieser Folie</div>
-            </div>
-            <div class="liveActions"><button id="restartBtn" class="btn secondary">↻ Neu starten</button><button id="stopBtn" class="btn danger">■ Beenden</button></div>
-          </div>
-
-          <div class="three" style="margin-top:16px">
-            <div class="metric"><div id="metricParticipants" class="value">0</div><div class="label">Teilnehmer</div></div>
-            <div class="metric"><div id="metricAnswers" class="value">0</div><div class="label">Antworten gesamt</div></div>
-            <div class="metric"><div id="metricRate" class="value">0%</div><div class="label">Antwortquote auf dieser Folie</div></div>
-          </div>
-
-          <div class="two" style="margin-top:16px">
-            <div class="panel liveCard">
-              <div class="muted">Schüler-Zugang</div>
-              <h2 style="margin:6px 0 8px">Zugang anzeigen</h2>
-              <p class="muted" style="margin-top:0">Teilnahmecode und QR-Code bleiben ausgeblendet und werden nur bei Bedarf als Fenster geöffnet.</p>
-              <div class="accessActions" style="margin-top:18px">
-                <button id="showCodeBtn" class="btn accessBtn">🔢 Teilnahmecode anzeigen</button>
-                <button id="showQrBtn" class="btn secondary accessBtn">▦ QR-Code anzeigen</button>
-              </div>
-            </div>
-            <div class="panel liveCard">
-              <div class="row" style="justify-content:space-between"><div><div class="muted">Aktuelle Folie</div><div><b id="slideIndicator">1 / 1</b></div></div><div class="subtle" id="liveType">Multiple-Choice</div></div>
-              <div style="margin:10px 0 18px" class="progress"><span id="slideProgress" style="width:100%"></span></div>
-              <div id="liveQuestion" class="liveQuestion">Warte …</div>
-              <div class="row" style="margin-top:20px"><button id="prevBtn" class="btn secondary">← Zurück</button><button id="nextBtn" class="btn">Weiter →</button></div>
-            </div>
-          </div>
-
-          <div style="margin-top:16px">
-            <div class="answerTitle"><div><h2 style="margin-bottom:3px">Live-Antworten</h2><div class="muted">Die Ansicht aktualisiert sich automatisch, sobald Schüler antworten.</div></div><span id="lastUpdate" class="subtle">Noch keine Daten</span></div>
-            <div id="answers"></div>
-          </div>
-        </section>
-      </main>
-    </div>
-  </section>
+<header class="top">
+<div><div class="brand">SchulUmfrage</div><div class="muted">Lehrerbereich · Live-Moderation</div></div>
+<div class="row"><span class="status muted" id="connection"><span class="dot"></span> Verbinde …</span><button class="btn secondary hidden" id="logoutBtn">Abmelden</button></div>
+</header>
+<section class="panel login" id="loginView">
+<span class="badge">GESCHÜTZTER LEHRERBEREICH</span><h1>Anmelden</h1>
+<p class="muted">Melde dich mit deinem Supabase-Lehrerkonto an.</p>
+<form id="loginForm"><div class="field"><label>E-Mail</label><input autocomplete="username" id="email" required="" type="email"/></div><div class="field"><label>Passwort</label><input autocomplete="current-password" id="password" required="" type="password"/></div><button class="btn" type="submit">Anmelden</button></form><p class="muted" id="loginMsg"></p>
+</section>
+<section class="hidden" id="appView">
+<div class="grid">
+<aside class="panel">
+<div class="row" style="justify-content:space-between"><h2>Umfragen</h2><button class="btn" id="newBtn">＋</button></div>
+<div class="list" id="surveyList"></div>
+</aside>
+<main>
+<section class="panel" id="editorView">
+<div class="row" style="justify-content:space-between"><div><span class="badge">EDITOR</span><h1 id="editorTitle">Umfrage auswählen</h1></div><div class="row"><button class="btn secondary" disabled="" id="saveBtn">Speichern</button><button class="btn" disabled="" id="startBtn">▶ Starten</button></div></div>
+<div class="empty" id="editorEmpty">Erstelle eine neue Umfrage oder wähle links eine vorhandene Umfrage aus.</div>
+<div class="hidden" id="editorForm"><div class="field"><label>Umfrage-Name</label><input id="surveyName"/></div><div id="slides"></div><button class="btn secondary" id="addSlideBtn">＋ Folie hinzufügen</button></div>
+</section>
+<section class="panel hidden" id="sessionView" style="margin-top:18px">
+<div class="sessionHeader">
+<div class="row" style="justify-content:space-between;align-items:center">
+<div class="sessionTitle" id="sessionTitle">Umfrage</div>
+<div class="liveActions">
+<button class="btn accessBtn" id="showCodeBtn">Teilnahmecode</button>
+<button class="btn accessBtn" id="showQrBtn">QR-Code</button>
+<button class="btn" id="restartBtn">Neu starten</button>
+<button class="btn danger" id="stopBtn">Beenden</button>
 </div>
-<div id="accessModal" class="modalBackdrop hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-  <div class="modal">
-    <button id="modalClose" class="modalClose" aria-label="Fenster schließen">×</button>
-    <h2 id="modalTitle">Zugang</h2>
-    <div id="modalBody"></div>
-  </div>
 </div>
-<div id="toast" class="toast hidden"></div>
+</div>
+<div class="liveShell">
+<div class="liveMainCard">
+<div class="questionHeader">
+<button class="btn secondary" id="prevBtn">← zurück</button>
+<div id="liveQuestion">Warte …</div>
+<button class="btn secondary" id="nextBtn">weiter →</button>
+</div>
+<div class="liveOptionsPlaceholder" id="liveOptions"></div>
+<div class="liveAnswersPanel">
+<h2>Live-Antworten</h2>
+<div class="muted">Die Ansicht aktualisiert sich automatisch, sobald Schüler antworten.</div>
+<div id="answers"></div>
+</div>
+</div>
+<aside class="metricStack">
+<div class="metric"><div class="value" id="metricParticipants">0</div><div class="label">Teilnehmer</div></div>
+<div class="metric"><div class="value" id="metricRate">0%</div><div class="label">Antwortquote</div></div>
+<div class="metric"><div class="slideMetricValue" id="slideIndicator">1 / 1</div><div class="slideMetricLabel">Folie</div></div>
+<div class="progress"><span id="slideProgress" style="width:100%"></span></div>
+</aside>
+</div>
+<div aria-hidden="true" class="compatHidden"><span id="participantCount">0</span><span id="currentResponseCount">0</span><span id="metricAnswers">0</span><span id="liveType"></span><span id="sessionPill"></span><span id="lastUpdate"></span></div></section>
+</main>
+</div>
+</section>
+</div>
+<div aria-labelledby="modalTitle" aria-modal="true" class="modalBackdrop hidden" id="accessModal" role="dialog">
+<div class="modal">
+<button aria-label="Fenster schließen" class="modalClose" id="modalClose">×</button>
+<h2 id="modalTitle">Zugang</h2>
+<div id="modalBody"></div>
+</div>
+</div>
+<div class="toast hidden" id="toast"></div>
 <script>
 const SUPABASE_URL='https://mqtcwiiawmuxrpkjfrfc.supabase.co';
 const SUPABASE_KEY='sb_publishable_eY5NBW8EJHuyO2Ic5S3HBQ_tSwErhp-';
@@ -138,7 +132,8 @@ async function refreshSession(){if(!currentSession)return;const {data,error}=awa
 function renderSession(){
   if(!currentSession)return;
   const slides=currentSession.survey_snapshot||[], i=currentSession.current_slide||0, f=slides[i]||{};
-  $('liveQuestion').textContent=f.question||'Keine Frage';$('liveType').textContent=f.type||'';
+  $('liveQuestion').textContent=f.question||'Keine Frage';if($('liveType'))$('liveType').textContent=f.type||'';
+  const optionRoot=$('liveOptions'); if(optionRoot){ const t=f.type||''; const opts=f.options||[]; optionRoot.innerHTML = (t==='Multiple-Choice'||t==='Ranking'||t==='Skala') ? opts.map(o=>'<div class=\"liveOption\">'+esc(o)+'</div>').join('') : ''; optionRoot.className = optionRoot.innerHTML ? '' : 'liveOptionsPlaceholder'; }
   $('slideIndicator').textContent=(slides.length?i+1:0)+' / '+slides.length;
   $('slideProgress').style.width=(slides.length?((i+1)/slides.length*100):0)+'%';
   $('prevBtn').disabled=i<=0||currentSession.status==='ended';$('nextBtn').disabled=i>=slides.length-1||currentSession.status==='ended';
