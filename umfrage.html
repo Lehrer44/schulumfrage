@@ -159,7 +159,7 @@ function removeSlide(index){
  if(slides.length===1){toast('Eine Umfrage braucht mindestens eine Folie.');return}
  if(!confirm('Folie '+(index+1)+' wirklich löschen?'))return;
  const removed=slides.splice(index,1)[0];
- if(removed?.media?.path){removeStorageObject(removed.media.path).catch(()=>{})}
+ if(removed?.media?.path){removeStorageObject(removed.media.path).catch(()=>{})}if(removed?.pinImage?.path){removeStorageObject(removed.pinImage.path).catch(()=>{})}
  activeSlide=Math.max(0,Math.min(activeSlide,slides.length-1));
  renderSlides();renderEditor();renderPreview();setSaveState('Ungespeicherte Änderungen');
 }
