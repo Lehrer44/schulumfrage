@@ -29,4 +29,27 @@ drop trigger if exists surveys_updated_at on public.surveys; create trigger surv
 drop trigger if exists sessions_updated_at on public.sessions; create trigger sessions_updated_at before update on public.sessions for each row execute function public.set_updated_at();
 drop trigger if exists responses_updated_at on public.responses; create trigger responses_updated_at before update on public.responses for each row execute function public.set_updated_at();
 
--- Create a public bucket named survey-media and add Storage policies for authenticated teachers in the dashboard.
+-- Media storage used by the survey editor.
+-- Public download is intentional so students can display media using the publishable key.
+insert into storage.buckets (id,name,public,file_size_limit,allowed_mime_types)
+values ('survey-media','survey-media',true,26214400,array['image/*','video/*','audio/*'])
+on conflict (id) do update
+set public=true,file_size_limit=26214400,allowed_mime_types=array['image/*','video/*','audio/*'];
+
+drop policy if exists "survey_media_authenticated_insert" on storage.objects;
+create policy "survey_media_authenticated_insert"
+on storage.objects for insert
+to authenticated
+with check (
+  bucket_id='survey-media'
+  and (storage.foldername(name))[1]=(select auth.uid()::text)
+);
+
+drop policy if exists "survey_media_authenticated_delete" on storage.objects;
+create policy "survey_media_authenticated_delete"
+on storage.objects for delete
+to authenticated
+using (
+  bucket_id='survey-media'
+  and (storage.foldername(name))[1]=(select auth.uid()::text)
+);
