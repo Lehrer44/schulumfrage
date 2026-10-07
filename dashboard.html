@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SchulUmfrage – Übersicht</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--bg:#f1efe6;--line:#93856a;--text:#5c5547;--muted:#90836b;--accent:#918469;--accent-dark:#6e624e;--danger:#ef726b;--ok:#22a867}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:"Avenir Next",Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+body{min-height:100vh}.wrap{max-width:1200px;margin:0 auto;padding:28px 22px 40px}.top{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:24px}.title{font-size:28px;font-weight:500;color:var(--muted)}.btn{border:2px solid var(--line);border-radius:8px;background:rgba(246,244,236,.56);color:var(--muted);font:inherit;font-weight:600;padding:9px 14px;cursor:pointer}.btn:hover{background:#e9e5d8;color:var(--accent-dark)}.btn.accent{background:var(--accent);border-color:var(--accent);color:#fff}.btn.danger{background:var(--danger);border-color:var(--danger);color:#fff}.status{font-size:13px;color:var(--muted)}.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--ok);margin-right:6px}
+.columns{display:grid;grid-template-columns:1fr 1fr;gap:22px}.panel{border:2px solid var(--line);border-radius:20px;padding:20px;background:rgba(246,244,236,.18)}.panelHeader{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px}.panel h2{margin:0;color:var(--muted);font-size:27px;font-weight:500}.plus{width:38px;height:38px;padding:0;border:0;border-radius:9px;background:var(--accent);color:#fff;font-size:23px;line-height:1}.list{display:grid;gap:10px}.item{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center;border:2px solid var(--line);border-radius:11px;padding:12px;background:rgba(247,244,234,.55)}.itemName{font-weight:600;color:var(--text);overflow-wrap:anywhere}.itemMeta{font-size:13px;color:var(--muted);margin-top:3px}.actions{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}.actions .btn{padding:7px 10px;font-size:13px}.empty{border:2px dashed var(--line);border-radius:11px;padding:28px 16px;text-align:center;color:var(--muted)}.toast{position:fixed;right:18px;bottom:18px;background:#efebe0;border:2px solid var(--line);border-radius:10px;padding:12px 15px;max-width:420px}.hidden{display:none!important}
+@media(max-width:800px){.columns{grid-template-columns:1fr}.wrap{padding:20px 16px 30px}.top{align-items:flex-start}.item{grid-template-columns:1fr}.actions{justify-content:flex-start}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="top">
+<div><div class="title">Lehrerbereich · Übersicht</div><div class="status"><span class="dot"></span><span id="connection">Verbunden</span></div></div>
+<button class="btn" id="logoutBtn">Abmelden</button>
+</header>
+<main class="columns">
+<section class="panel">
+<div class="panelHeader"><h2>Umfragen</h2><button class="plus" id="newSurveyBtn" title="Neue Umfrage">＋</button></div>
+<div class="list" id="surveyList"></div>
+</section>
+<section class="panel">
+<div class="panelHeader"><h2>Spiele</h2><button class="plus" id="newGameBtn" title="Neues Spiel" disabled>＋</button></div>
+<div class="list" id="gameList"><div class="empty">Spiele werden im nächsten Schritt ergänzt.</div></div>
+</section>
+</main>
+</div>
+<div class="toast hidden" id="toast"></div>
+<script>
+const SUPABASE_URL='https://mqtcwiiawmuxrpkjfrfc.supabase.co';
+const SUPABASE_KEY='sb_publishable_eY5NBW8EJHuyO2Ic5S3HBQ_tSwErhp-';
+const db=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+const $=id=>document.getElementById(id);
+let surveys=[];
+function toast(msg){$('toast').textContent=msg;$('toast').classList.remove('hidden');clearTimeout(window.__toast);window.__toast=setTimeout(()=>$('toast').classList.add('hidden'),3200)}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+async function requireUser(){const {data,error}=await db.auth.getUser();if(error||!data.user){window.location.href='teacher.html';return null}return data.user}
+async function loadSurveys(){const {data,error}=await db.from('surveys').select('id,name,slides,updated_at').order('updated_at',{ascending:false});if(error){toast('Umfragen konnten nicht geladen werden: '+error.message);return}surveys=data||[];renderSurveys()}
+function renderSurveys(){const root=$('surveyList');root.innerHTML='';if(!surveys.length){root.innerHTML='<div class="empty">Noch keine Umfragen vorhanden.</div>';return}surveys.forEach(s=>{const el=document.createElement('div');el.className='item';el.innerHTML='<div><div class="itemName">'+esc(s.name)+'</div><div class="itemMeta">'+((s.slides||[]).length)+' Folien</div></div><div class="actions"><button class="btn start">Starten</button><button class="btn edit">Bearbeiten</button><button class="btn danger del">Löschen</button></div>';el.querySelector('.start').onclick=()=>startSurvey(s);el.querySelector('.edit').onclick=()=>window.location.href='umfrage.html?id='+encodeURIComponent(s.id);el.querySelector('.del').onclick=()=>deleteSurvey(s);root.appendChild(el)})}
+async function startSurvey(s){const user=await requireUser();if(!user)return;const join_code=Math.random().toString(36).slice(2,7).toUpperCase();const {data,error}=await db.from('sessions').insert({survey_id:s.id,owner_id:user.id,title:s.name,survey_snapshot:s.slides,status:'lobby',current_slide:0,join_code}).select().single();if(error){toast('Session konnte nicht gestartet werden: '+error.message);return}const {data:running,error:runError}=await db.from('sessions').update({status:'running',started_at:new Date().toISOString(),updated_at:new Date().toISOString()}).eq('id',data.id).select().single();if(runError){toast('Session konnte nicht gestartet werden: '+runError.message);return}window.location.href='umfrage-live.html?id='+encodeURIComponent(running.id)}
+async function deleteSurvey(s){if(!confirm('Umfrage wirklich löschen?'))return;const {error}=await db.from('surveys').delete().eq('id',s.id);if(error){toast('Löschen fehlgeschlagen: '+error.message);return}surveys=surveys.filter(x=>x.id!==s.id);renderSurveys();toast('Umfrage gelöscht.')}
+$('newSurveyBtn').onclick=()=>window.location.href='umfrage.html?new=1';
+$('logoutBtn').onclick=async()=>{await db.auth.signOut();window.location.href='teacher.html'};
+(async()=>{const user=await requireUser();if(user)await loadSurveys()})();
+</script>
+</body>
+</html>
