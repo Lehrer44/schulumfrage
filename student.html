@@ -111,7 +111,8 @@ async function restoreSavedResponse(slideIndex){
       show('questionView');
     }else{
       submittedSlide=-1;
-      answerValue=null;
+      // Keep the answer initialized by renderQuestion (e.g. Skala sliders
+      // and Ranking) and any input the student made while the lookup ran.
       $('submitBtn').classList.remove('hidden');
       $('submitBtn').disabled=false;
       $('submitBtn').textContent='Antwort absenden';
