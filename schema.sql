@@ -96,6 +96,19 @@ language sql security definer set search_path=''
 as $function$
  select s.id,s.title,s.survey_snapshot,s.status,s.current_slide,s.join_code,s.updated_at from public.sessions s join public.participants p on p.session_id=s.id where s.id=p_session_id and p.id=p_participant_id;
 $function$;
+
+create or replace function public.get_participant_response(p_session_id uuid,p_participant_id uuid,p_slide_index integer)
+returns table(answer jsonb,updated_at timestamptz)
+language sql stable security definer set search_path=''
+as $function$
+ select r.answer,r.updated_at
+ from public.responses r
+ join public.participants p on p.id=r.participant_id and p.session_id=r.session_id
+ join public.sessions s on s.id=r.session_id
+ where s.id=p_session_id and p.id=p_participant_id
+   and r.slide_index=p_slide_index and s.status in ('lobby','running')
+ limit 1;
+$function$;
 create or replace function private.can_submit_response(p_session_id uuid,p_participant_id uuid)
 returns boolean language sql stable security definer set search_path=''
 as $function$
@@ -103,9 +116,11 @@ as $function$
 $function$;
 revoke all on function public.join_session_by_code(text,text,uuid) from public,anon,authenticated;
 revoke all on function public.get_participant_session(uuid,uuid) from public,anon,authenticated;
+revoke all on function public.get_participant_response(uuid,uuid,integer) from public,anon,authenticated;
 revoke all on function private.can_submit_response(uuid,uuid) from public,anon,authenticated;
 grant execute on function public.join_session_by_code(text,text,uuid) to anon;
 grant execute on function public.get_participant_session(uuid,uuid) to anon;
+grant execute on function public.get_participant_response(uuid,uuid,integer) to anon;
 grant usage on schema private to anon,authenticated;
 grant execute on function private.can_submit_response(uuid,uuid) to anon;
 drop policy if exists surveys_select on public.surveys; create policy surveys_select on public.surveys for select to authenticated using ((select auth.uid())=owner_id);
