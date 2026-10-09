@@ -69,7 +69,7 @@ drop policy if exists responses_teacher_insert on public.responses; create polic
 drop policy if exists responses_anon_insert on public.responses; create policy responses_anon_insert on public.responses for insert to anon with check (private.can_submit_response(session_id, participant_id));
 drop policy if exists responses_teacher_delete on public.responses; create policy responses_teacher_delete on public.responses for delete to authenticated using (exists(select 1 from public.sessions s where s.id=session_id and s.owner_id=(select auth.uid())));
 
-create or replace function public.set_updated_at() returns trigger language plpgsql as $$ begin new.updated_at=now(); return new; end; $$;
+create or replace function public.set_updated_at() returns trigger language plpgsql set search_path = '' as $$ begin new.updated_at=pg_catalog.now(); return new; end; $$;
 drop trigger if exists surveys_updated_at on public.surveys; create trigger surveys_updated_at before update on public.surveys for each row execute function public.set_updated_at();
 drop trigger if exists sessions_updated_at on public.sessions; create trigger sessions_updated_at before update on public.sessions for each row execute function public.set_updated_at();
 drop trigger if exists responses_updated_at on public.responses; create trigger responses_updated_at before update on public.responses for each row execute function public.set_updated_at();
