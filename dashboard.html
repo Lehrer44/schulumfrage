@@ -9,7 +9,28 @@
 :root{--bg:#f1efe6;--line:#93856a;--text:#5c5547;--muted:#90836b;--accent:#918469;--accent-dark:#6e624e;--danger:#ef726b;--ok:#22a867}
 *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:"Avenir Next",Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
 body{min-height:100vh}.wrap{max-width:1200px;margin:0 auto;padding:28px 22px 40px}.top{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:24px}.title{font-size:28px;font-weight:500;color:var(--muted)}.btn{border:2px solid var(--line);border-radius:8px;background:rgba(246,244,236,.56);color:var(--muted);font:inherit;font-weight:600;padding:9px 14px;cursor:pointer}.btn:hover{background:#e9e5d8;color:var(--accent-dark)}.btn.accent{background:var(--accent);border-color:var(--accent);color:#fff}.btn.danger{background:var(--danger);border-color:var(--danger);color:#fff}.status{font-size:13px;color:var(--muted)}.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--ok);margin-right:6px}
-.columns{display:grid;grid-template-columns:1fr 1fr;gap:22px}.panel{border:2px solid var(--line);border-radius:20px;padding:20px;background:rgba(246,244,236,.18)}.panelHeader{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px}.panel h2{margin:0;color:var(--muted);font-size:27px;font-weight:500}.plus{width:38px;height:38px;padding:0;border:0;border-radius:9px;background:var(--accent);color:#fff;font-size:23px;line-height:1}.list{display:grid;gap:10px}.item{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center;border:2px solid var(--line);border-radius:11px;padding:12px;background:rgba(247,244,234,.55)}.itemName{font-weight:600;color:var(--text);overflow-wrap:anywhere}.itemMeta{font-size:13px;color:var(--muted);margin-top:3px}.actions{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}.actions .btn{padding:7px 10px;font-size:13px}.empty{border:2px dashed var(--line);border-radius:11px;padding:28px 16px;text-align:center;color:var(--muted)}.toast{position:fixed;right:18px;bottom:18px;background:#efebe0;border:2px solid var(--line);border-radius:10px;padding:12px 15px;max-width:420px}.hidden{display:none!important}
+.columns{display:grid;grid-template-columns:1fr 1fr;gap:22px}.panel{border:2px solid var(--line);border-radius:20px;padding:20px;background:rgba(246,244,236,.18)}.panelHeader{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px}.panel h2{margin:0;color:var(--muted);font-size:27px;font-weight:500}.plus{width:38px;height:38px;padding:0;border:0;border-radius:9px;background:var(--accent);color:#fff;font-size:23px;line-height:1}.list{display:grid;gap:10px}.item{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center;border:2px solid var(--line);border-radius:11px;padding:12px;background:rgba(247,244,234,.55)}.itemName{font-weight:600;color:var(--text);overflow-wrap:anywhere}.itemMeta{font-size:13px;color:var(--muted);margin-top:3px}.actions{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}.actions .btn{padding:7px 10px;font-size:13px}.empty{border:2px dashed var(--line);border-radius:11px;padding:28px 16px;text-align:center;color:var(--muted)}.toast{position:fixed;right:18px;bottom:18px;background:#efebe0;border:2px solid var(--line);border-radius:10px;padding:12px 15px;max-width:420px;z-index:30}
+.hidden{display:none!important}
+.topActions{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.modalBackdrop{position:fixed;inset:0;z-index:20;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(36,32,25,.48)}
+.settingsDialog{width:min(100%,680px);max-height:min(88vh,820px);overflow:auto;background:var(--bg);border:2px solid var(--line);border-radius:20px;padding:22px;box-shadow:0 24px 80px rgba(0,0,0,.22)}
+.settingsHeader{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:22px}
+.settingsHeader h2{margin:0;color:var(--text);font-size:25px;font-weight:600}
+.settingsHeader p{margin:5px 0 0;color:var(--muted);font-size:14px}
+.iconBtn{width:40px;height:40px;flex:0 0 40px;border:2px solid var(--line);border-radius:10px;background:transparent;color:var(--text);font-size:25px;line-height:1;cursor:pointer}
+.statsGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px}
+.statCard{border:2px solid var(--line);border-radius:13px;padding:16px;background:rgba(246,244,236,.56)}
+.statLabel{font-size:14px;color:var(--muted)}
+.statValue{display:block;margin:6px 0;font-size:36px;line-height:1.1;font-weight:650;color:var(--text);font-variant-numeric:tabular-nums}
+.statHint{font-size:12px;color:var(--muted)}
+.settingsSection{padding:17px 0;border-top:1px solid rgba(147,133,106,.55)}
+.settingsSection h3{margin:0 0 7px;font-size:18px;color:var(--text)}
+.settingsSection p{margin:0 0 12px;font-size:14px;line-height:1.5;color:var(--muted)}
+.settingsSection .btn{width:100%;text-align:center}
+.settingsNote{margin-top:18px;padding-top:14px;border-top:1px solid rgba(147,133,106,.55);font-size:12px;line-height:1.5;color:var(--muted)}
+.settingsStatus{min-height:20px;margin-top:10px;font-size:13px;color:var(--muted)}
+.btn:disabled{opacity:.55;cursor:wait}
+@media(max-width:520px){.modalBackdrop{padding:10px}.settingsDialog{padding:17px;border-radius:15px}.statsGrid{gap:8px}.statCard{padding:12px}.statValue{font-size:30px}.topActions{justify-content:flex-end}.topActions .btn{padding:8px 10px;font-size:14px}}
 @media(max-width:800px){.columns{grid-template-columns:1fr}.wrap{padding:20px 16px 30px}.top{align-items:flex-start}.item{grid-template-columns:1fr}.actions{justify-content:flex-start}}
 </style>
 </head>
@@ -17,7 +38,7 @@ body{min-height:100vh}.wrap{max-width:1200px;margin:0 auto;padding:28px 22px 40p
 <div class="wrap">
 <header class="top">
 <div><div class="title">Lehrerbereich · Übersicht</div><div class="status"><span class="dot"></span><span id="connection">Verbunden</span></div></div>
-<button class="btn" id="logoutBtn">Abmelden</button>
+<div class="topActions"><button class="btn" id="settingsBtn" aria-label="Einstellungen öffnen" title="Einstellungen">⚙ Einstellungen</button><button class="btn" id="logoutBtn">Abmelden</button></div>
 </header>
 <main class="columns">
 <section class="panel">
@@ -29,6 +50,30 @@ body{min-height:100vh}.wrap{max-width:1200px;margin:0 auto;padding:28px 22px 40p
 <div class="list" id="gameList"><div class="empty">Spiele werden im nächsten Schritt ergänzt.</div></div>
 </section>
 </main>
+</div>
+<div class="modalBackdrop hidden" id="settingsModal" role="presentation">
+<section class="settingsDialog" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+  <header class="settingsHeader">
+    <div><h2 id="settingsTitle">Einstellungen</h2><p>Sitzungsverwaltung</p></div>
+    <button class="iconBtn" id="closeSettingsBtn" type="button" aria-label="Einstellungen schließen" title="Schließen">×</button>
+  </header>
+  <div class="statsGrid" aria-live="polite">
+    <div class="statCard"><div class="statLabel">Laufende Sitzungen</div><strong class="statValue" id="activeSessionCount">–</strong><div class="statHint">Offen oder gerade in Durchführung</div></div>
+    <div class="statCard"><div class="statLabel">Beendete Sitzungen</div><strong class="statValue" id="endedSessionCount">–</strong><div class="statHint">Bleiben gespeichert, bis du sie löschst</div></div>
+  </div>
+  <section class="settingsSection">
+    <h3>Alle Sitzungen beenden</h3>
+    <p>Beendet alle noch offenen Sitzungen. Teilnehmer können nicht mehr beitreten; vorhandene Teilnehmer und Antworten bleiben gespeichert.</p>
+    <button class="btn accent" id="endAllSessionsBtn" type="button">Alle Sitzungen beenden</button>
+  </section>
+  <section class="settingsSection">
+    <h3>Gespeicherte Sitzungen löschen</h3>
+    <p>Löscht alle deine Sitzungen einschließlich Teilnehmern und Antworten dauerhaft. Deine gespeicherten Umfragevorlagen bleiben erhalten.</p>
+    <button class="btn danger" id="deleteAllSessionsBtn" type="button">Alle Sitzungen löschen</button>
+  </section>
+  <div class="settingsStatus" id="settingsStatus" role="status" aria-live="polite"></div>
+  <footer class="settingsNote">Es werden keine Sitzungen automatisch gelöscht. Dieses Einstellungsfenster ist modular aufgebaut und kann später um weitere Funktionen ergänzt werden.</footer>
+</section>
 </div>
 <div class="toast hidden" id="toast"></div>
 <script>
@@ -43,9 +88,69 @@ async function createSessionWithUniqueCode(payload){for(let attempt=0;attempt<8;
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 async function requireUser(){const {data,error}=await db.auth.getUser();if(error||!data.user){window.location.href='teacher.html';return null}return data.user}
 async function loadSurveys(){const {data,error}=await db.from('surveys').select('id,name,slides,updated_at').order('updated_at',{ascending:false});if(error){toast('Umfragen konnten nicht geladen werden: '+error.message);return}surveys=data||[];renderSurveys()}
+async function loadSessionCounts(){
+  $('activeSessionCount').textContent='…';$('endedSessionCount').textContent='…';
+  const [activeResult,endedResult]=await Promise.all([
+    db.from('sessions').select('id',{count:'exact',head:true}).in('status',['lobby','running']),
+    db.from('sessions').select('id',{count:'exact',head:true}).eq('status','ended')
+  ]);
+  if(activeResult.error||endedResult.error){
+    $('activeSessionCount').textContent='–';$('endedSessionCount').textContent='–';
+    $('settingsStatus').textContent='Sitzungszahlen konnten nicht geladen werden: '+(activeResult.error||endedResult.error).message;
+    return;
+  }
+  $('activeSessionCount').textContent=String(activeResult.count??0);
+  $('endedSessionCount').textContent=String(endedResult.count??0);
+  $('settingsStatus').textContent='Zahlen aktualisiert.';
+}
+function openSettings(){
+  $('settingsModal').classList.remove('hidden');
+  $('settingsStatus').textContent='Lade Sitzungszahlen …';
+  $('closeSettingsBtn').focus();
+  loadSessionCounts();
+}
+function closeSettings(){
+  $('settingsModal').classList.add('hidden');
+  $('settingsBtn').focus();
+}
+function setSessionActionsBusy(busy){
+  $('endAllSessionsBtn').disabled=busy;
+  $('deleteAllSessionsBtn').disabled=busy;
+  $('closeSettingsBtn').disabled=busy;
+}
+async function endAllSessions(){
+  if(!confirm('Alle noch offenen Sitzungen beenden? Teilnehmer und Antworten bleiben erhalten.'))return;
+  setSessionActionsBusy(true);$('settingsStatus').textContent='Sitzungen werden beendet …';
+  try{
+    const {data,error}=await db.rpc('end_all_owned_sessions');
+    if(error)throw error;
+    toast(String(data??0)+' Sitzungen beendet.');
+    await loadSessionCounts();
+  }catch(error){
+    $('settingsStatus').textContent='Sitzungen konnten nicht beendet werden: '+error.message;
+  }finally{setSessionActionsBusy(false)}
+}
+async function deleteAllSessions(){
+  if(!confirm('Wirklich alle gespeicherten Sitzungen löschen? Teilnehmer und Antworten werden dauerhaft entfernt. Umfragevorlagen bleiben erhalten.'))return;
+  setSessionActionsBusy(true);$('settingsStatus').textContent='Sitzungen werden gelöscht …';
+  try{
+    const {data,error}=await db.rpc('delete_all_owned_sessions');
+    if(error)throw error;
+    toast(String(data??0)+' Sitzungen gelöscht.');
+    await loadSessionCounts();
+  }catch(error){
+    $('settingsStatus').textContent='Sitzungen konnten nicht gelöscht werden: '+error.message;
+  }finally{setSessionActionsBusy(false)}
+}
 function renderSurveys(){const root=$('surveyList');root.innerHTML='';if(!surveys.length){root.innerHTML='<div class="empty">Noch keine Umfragen vorhanden.</div>';return}surveys.forEach(s=>{const el=document.createElement('div');el.className='item';el.innerHTML='<div><div class="itemName">'+esc(s.name)+'</div><div class="itemMeta">'+((s.slides||[]).length)+' Folien</div></div><div class="actions"><button class="btn start">Starten</button><button class="btn edit">Bearbeiten</button><button class="btn danger del">Löschen</button></div>';el.querySelector('.start').onclick=()=>startSurvey(s);el.querySelector('.edit').onclick=()=>window.location.href='umfrage.html?id='+encodeURIComponent(s.id);el.querySelector('.del').onclick=()=>deleteSurvey(s);root.appendChild(el)})}
 async function startSurvey(s){const user=await requireUser();if(!user)return;const {data,error}=await createSessionWithUniqueCode({survey_id:s.id,owner_id:user.id,title:s.name,survey_snapshot:s.slides,status:'lobby',current_slide:0});if(error){toast('Session konnte nicht gestartet werden: '+error.message);return}window.location.href='umfrage-live.html?id='+encodeURIComponent(data.id)}
 async function deleteSurvey(s){if(!confirm('Umfrage wirklich löschen?'))return;const {error}=await db.from('surveys').delete().eq('id',s.id);if(error){toast('Löschen fehlgeschlagen: '+error.message);return}surveys=surveys.filter(x=>x.id!==s.id);renderSurveys();toast('Umfrage gelöscht.')}
+$('settingsBtn').onclick=openSettings;
+$('closeSettingsBtn').onclick=closeSettings;
+$('settingsModal').addEventListener('click',event=>{if(event.target===$('settingsModal'))closeSettings()});
+document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!$('settingsModal').classList.contains('hidden'))closeSettings()});
+$('endAllSessionsBtn').onclick=endAllSessions;
+$('deleteAllSessionsBtn').onclick=deleteAllSessions;
 $('newSurveyBtn').onclick=()=>window.location.href='umfrage.html?new=1';
 $('logoutBtn').onclick=async()=>{await db.auth.signOut();window.location.href='teacher.html'};
 (async()=>{const user=await requireUser();if(user)await loadSurveys()})();
