@@ -73,6 +73,9 @@ body{min-height:100vh}.wrap{max-width:1380px;margin:0 auto;padding:22px 18px 38p
 const SUPABASE_URL='https://mqtcwiiawmuxrpkjfrfc.supabase.co';
 const SUPABASE_KEY='sb_publishable_eY5NBW8EJHuyO2Ic5S3HBQ_tSwErhp-';
 const db=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+function generateJoinCode(){const alphabet='0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';let code='';while(code.length<5){const bytes=new Uint8Array(16);crypto.getRandomValues(bytes);for(const byte of bytes){if(byte<252){code+=alphabet[byte%36];if(code.length===5)break}}}return code}
+async function createSessionWithUniqueCode(payload){for(let attempt=0;attempt<8;attempt++){const {data,error}=await db.from('sessions').insert({...payload,join_code:generateJoinCode()}).select().single();if(!error)return {data,error:null};if(error.code!=='23505')return {data:null,error}}return {data:null,error:{message:'Es konnte nach mehreren Versuchen kein freier Teilnahmecode erzeugt werden. Bitte erneut versuchen.'}}}
+
 const $=id=>document.getElementById(id);
 const types=[
  {id:'Multiple-Choice',title:'Multiple Choice',desc:'Eine Antwort auswählen'},
@@ -360,8 +363,7 @@ async function removeMedia(){
 async function start(){
  const survey=await persistSurvey(false);if(!survey)return;
  const user=await requireUser();if(!user)return;
- const join_code=Math.random().toString(36).slice(2,7).toUpperCase();
- const {data,error}=await db.from('sessions').insert({survey_id:survey.id,owner_id:user.id,title:survey.name,survey_snapshot:survey.slides,status:'lobby',current_slide:0,join_code}).select().single();
+ const {data,error}=await createSessionWithUniqueCode({survey_id:survey.id,owner_id:user.id,title:survey.name,survey_snapshot:survey.slides,status:'lobby',current_slide:0});
  if(error){toast('Session konnte nicht gestartet werden: '+error.message);return}
  location.href='umfrage-live.html?id='+encodeURIComponent(data.id);
 }
