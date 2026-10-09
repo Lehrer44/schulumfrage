@@ -16,7 +16,7 @@ create schema if not exists private;
 revoke all on schema private from public, anon, authenticated;
 create table if not exists private.join_code_rate_limits (ip_hash text primary key, window_start timestamptz not null default now(), attempts integer not null default 0);
 revoke all on table private.join_code_rate_limits from public, anon, authenticated;
-drop function if exists public.join_session_by_code(text,text,uuid);
+drop function if exists public.join_session_by_code(text,text);
 create or replace function public.join_session_by_code(p_join_code text,p_name text,p_participant_id uuid)
 returns table (id uuid,title text,survey_snapshot jsonb,status text,current_slide integer,join_code text,participant_id uuid)
 language plpgsql security definer set search_path = ''
