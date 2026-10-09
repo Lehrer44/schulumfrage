@@ -48,11 +48,38 @@ function show(id){['joinView','waitingView','questionView','finishedView'].forEa
 function normalizeCode(v){return v.trim().replace(/\s+/g,'').toUpperCase()}
 function setError(id,msg){$(id).textContent=msg||''}
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-function participantStorageKey(code,name){return 'schulumfrage:participant:'+code+':'+name.trim().toLocaleLowerCase('de-DE')}
+function participantStorageKey(code){return 'schulumfrage:participant:'+code}
+function legacyParticipantStorageKey(code,name){return 'schulumfrage:participant:'+code+':'+name.trim().toLocaleLowerCase('de-DE')}
 function getSavedParticipantId(key){try{const id=localStorage.getItem(key);return id&&/^[0-9a-f-]{36}$/i.test(id)?id:null}catch{return null}}
+function findSavedParticipantId(code,name){
+ const current=getSavedParticipantId(participantStorageKey(code));
+ if(current)return current;
+ const legacyExact=getSavedParticipantId(legacyParticipantStorageKey(code,name));
+ if(legacyExact)return legacyExact;
+ try{
+  const prefix=participantStorageKey(code)+':';
+  for(let i=0;i<localStorage.length;i++){
+   const key=localStorage.key(i);
+   if(key&&key.startsWith(prefix)){
+    const id=getSavedParticipantId(key);
+    if(id)return id;
+   }
+  }
+ }catch{}
+ return null;
+}
 function saveParticipantId(key,id){try{if(id)localStorage.setItem(key,id)}catch{}}
+function joinErrorMessage(error){
+ const message=String(error?.message||'');
+ if(message.includes('PARTICIPANT_NAME_MISMATCH'))return 'Diese Sitzung wurde auf diesem Gerät bereits mit einem anderen Namen betreten. Bitte verwende denselben Namen wie beim ersten Beitritt.';
+ if(message.includes('PARTICIPANT_NAME_TAKEN'))return 'Dieser Name wird in dieser Sitzung bereits verwendet. Bitte wähle einen anderen Namen.';
+ if(message.includes('SESSION_NOT_FOUND'))return 'Keine offene Umfrage mit diesem Teilnahmecode gefunden. Bitte Code prüfen.';
+ if(message.includes('JOIN_RATE_LIMITED'))return 'Zu viele Beitrittsversuche. Bitte warte einige Minuten und versuche es erneut.';
+ if(message.includes('INVALID_JOIN_INPUT'))return 'Bitte gib einen gültigen Teilnahmecode und Namen ein.';
+ return message||'Beitritt nicht möglich. Bitte erneut versuchen.';
+}
 async function findSession(code,name,participantId=null){return await db.rpc('join_session_by_code',{p_join_code:code,p_name:name,p_participant_id:participantId})}
-async function join(){setError('joinError','');const code=normalizeCode($('code').value),name=$('name').value.trim();if(!code||!name){setError('joinError','Bitte Code und Namen eingeben.');return}$('joinBtn').disabled=true;$('joinBtn').textContent='Beitreten …';try{const storageKey=participantStorageKey(code,name);const savedParticipantId=getSavedParticipantId(storageKey);const {data,error}=await findSession(code,name,savedParticipantId);if(error)throw error;const joined=Array.isArray(data)?data[0]:null;if(!joined)throw new Error('Keine laufende Umfrage mit diesem Code gefunden. Bitte Code prüfen oder später erneut versuchen.');session=joined;participant={id:joined.participant_id,session_id:joined.id,name};saveParticipantId(storageKey,joined.participant_id);$('participantName').textContent=name;$('waitingCode').textContent=joined.join_code;subscribe();renderSession()}catch(e){setError('joinError',e.message||'Beitritt nicht möglich.')}finally{$('joinBtn').disabled=false;$('joinBtn').textContent='Beitreten'}}
+async function join(){setError('joinError','');const code=normalizeCode($('code').value),name=$('name').value.trim();if(!code||!name){setError('joinError','Bitte Code und Namen eingeben.');return}$('joinBtn').disabled=true;$('joinBtn').textContent='Beitreten …';try{const storageKey=participantStorageKey(code);const savedParticipantId=findSavedParticipantId(code,name);const {data,error}=await findSession(code,name,savedParticipantId);if(error)throw error;const joined=Array.isArray(data)?data[0]:null;if(!joined)throw new Error('SESSION_NOT_FOUND');session=joined;participant={id:joined.participant_id,session_id:joined.id,name};saveParticipantId(storageKey,joined.participant_id);$('participantName').textContent=name;$('waitingCode').textContent=joined.join_code;subscribe();renderSession()}catch(e){setError('joinError',joinErrorMessage(e))}finally{$('joinBtn').disabled=false;$('joinBtn').textContent='Beitreten'}}
 function showConnectionIssue(message){const el=$('connectionNotice');el.textContent=message;el.classList.add('visible')}
 function clearConnectionIssue(){const el=$('connectionNotice');el.textContent='';el.classList.remove('visible')}
 function subscribe(){if(channel)db.removeChannel(channel);channel=db.channel('student-session-'+session.id).on('broadcast',{event:'teacher_control'},payload=>handleTeacherControl(payload?.payload||{})).subscribe();if(pollTimer)clearInterval(pollTimer);pollTimer=setInterval(refreshSession,2000);refreshSession()}
