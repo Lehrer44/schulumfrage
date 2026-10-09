@@ -85,6 +85,74 @@ function clearConnectionIssue(){const el=$('connectionNotice');el.textContent=''
 function subscribe(){if(channel)db.removeChannel(channel);channel=db.channel('student-session-'+session.id).on('broadcast',{event:'teacher_control'},payload=>handleTeacherControl(payload?.payload||{})).subscribe();if(pollTimer)clearInterval(pollTimer);pollTimer=setInterval(refreshSession,2000);refreshSession()}
 async function refreshSession(){if(!session||!participant||refreshing)return;refreshing=true;try{const {data,error}=await db.rpc('get_participant_session',{p_session_id:session.id,p_participant_id:participant.id});if(error)throw error;const next=Array.isArray(data)?data[0]:null;if(!next)throw new Error('Session nicht erreichbar.');const previousUpdatedAt=session.updated_at;const sameSlide=Number(next.current_slide)===Number(session.current_slide);const restarted=Boolean(previousUpdatedAt&&next.updated_at&&previousUpdatedAt!==next.updated_at&&sameSlide&&next.status==='running');session=next;refreshFailures=0;clearConnectionIssue();if(restarted){submittedSlide=-1;answerValue=null;responseRestoreToken++;responseStateLoadedKey=null;responseRestorePendingKey=null;const idx=Number(session.current_slide)||0;renderQuestion((session.survey_snapshot||[])[idx],idx);restoreSavedResponse(idx)}else renderSession();if(next.status==='ended'&&pollTimer){clearInterval(pollTimer);pollTimer=null}}catch(e){refreshFailures++;if(refreshFailures>=2)showConnectionIssue('Verbindung unterbrochen. Die Seite versucht automatisch erneut, den Umfragestatus abzurufen.');}finally{refreshing=false}}
 function responseStateKey(slideIndex){return session&&participant?session.id+':'+participant.id+':'+slideIndex:null}
+function setSavedFormReadOnly(readOnly){
+  $('answerArea').querySelectorAll('button,input,textarea,select').forEach(control=>{
+    control.disabled=readOnly;
+    if(control.tagName==='TEXTAREA')control.readOnly=readOnly;
+  });
+  const board=$('pinBoard');
+  if(board)board.style.pointerEvents=readOnly?'none':'';
+}
+function applySavedAnswerToForm(slideIndex,saved){
+  const f=(session?.survey_snapshot||[])[Number(slideIndex)]||{};
+  const type=f.type||'Offene Frage';
+  const value=saved?.answer?.value;
+  answerValue=value??null;
+
+  if(saved?.answer?.teacherMarked){
+    setSavedFormReadOnly(true);
+    return;
+  }
+
+  if(type==='Multiple-Choice'){
+    $('answerArea').querySelectorAll('.choice[data-value]').forEach(button=>{
+      button.classList.toggle('selected',button.dataset.value===String(value??''));
+    });
+  }else if(type==='Skala'){
+    const values=Array.isArray(value?.values)?value.values:[];
+    $('answerArea').querySelectorAll('.scaleRange').forEach(input=>{
+      const i=Number(input.dataset.index),entry=values[i];
+      if(!entry||!Number.isFinite(Number(entry.value)))return;
+      input.value=String(entry.value);
+      const label=$('scaleValue'+i);
+      if(label)label.textContent=String(entry.value);
+    });
+  }else if(type==='Ranking'&&Array.isArray(value)){
+    const box=$('answerArea').querySelector('.rankList');
+    if(box){
+      const rows=[...box.querySelectorAll('.rankItem')];
+      const ordered=[];
+      value.forEach(item=>{
+        const row=rows.find(candidate=>!ordered.includes(candidate)&&candidate.querySelector('span:nth-child(2)')?.textContent===String(item));
+        if(row)ordered.push(row);
+      });
+      rows.forEach(row=>{if(!ordered.includes(row))ordered.push(row)});
+      ordered.forEach((row,index)=>{
+        box.appendChild(row);
+        const number=row.querySelector('.rankNum');
+        if(number)number.textContent=String(index+1);
+      });
+    }
+  }else if(type==='Pin setzen'&&value&&Number.isFinite(Number(value.x))&&Number.isFinite(Number(value.y))){
+    const board=$('pinBoard');
+    if(board){
+      board.querySelectorAll('.myPin').forEach(pin=>pin.remove());
+      const pin=document.createElement('div');
+      pin.className='myPin';
+      pin.style.left=Math.max(0,Math.min(100,Number(value.x)))+'%';
+      pin.style.top=Math.max(0,Math.min(100,Number(value.y)))+'%';
+      board.appendChild(pin);
+      board.dataset.x=String(value.x);
+      board.dataset.y=String(value.y);
+    }
+  }else{
+    const textarea=$('textAnswer');
+    if(textarea&&value!==null&&value!==undefined)textarea.value=String(value);
+  }
+
+  // The answer has already been stored. Display the original input read-only.
+  setSavedFormReadOnly(true);
+}
 async function restoreSavedResponse(slideIndex){
   if(!session||!participant||session.status!=='running')return;
   const key=responseStateKey(slideIndex);
@@ -103,7 +171,7 @@ async function restoreSavedResponse(slideIndex){
     const saved=Array.isArray(data)?data[0]:null;
     if(saved){
       submittedSlide=slideIndex;
-      answerValue=saved.answer?.value??null;
+      applySavedAnswerToForm(slideIndex,saved);
       $('submitBtn').classList.add('hidden');
       $('submittedTitle').textContent=saved.answer?.teacherMarked?'✓ Als beantwortet markiert':'✓ Antwort gespeichert';
       $('submittedText').textContent=saved.answer?.teacherMarked?'Die Lehrkraft hat diese Frage für dich als beantwortet markiert.':'Deine bereits gespeicherte Antwort ist weiterhin vorhanden. Du musst sie nicht erneut absenden.';
