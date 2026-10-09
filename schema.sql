@@ -99,3 +99,56 @@ using (
   bucket_id='survey-media'
   and (storage.foldername(name))[1]=(select auth.uid()::text)
 );
+
+-- Teacher dashboard session management.
+-- These RPCs operate only on sessions owned by the authenticated teacher.
+-- Deleting a session cascades to its participants and responses; surveys remain.
+create or replace function public.end_all_owned_sessions()
+returns bigint
+language plpgsql
+security definer
+set search_path = ''
+as $function$
+declare
+  v_count bigint;
+begin
+  if auth.uid() is null then
+    raise exception 'Not authenticated';
+  end if;
+
+  update public.sessions
+  set status = 'ended'
+  where owner_id = auth.uid()
+    and status in ('lobby', 'running');
+
+  get diagnostics v_count = row_count;
+  return v_count;
+end;
+$function$;
+
+create or replace function public.delete_all_owned_sessions()
+returns bigint
+language plpgsql
+security definer
+set search_path = ''
+as $function$
+declare
+  v_count bigint;
+begin
+  if auth.uid() is null then
+    raise exception 'Not authenticated';
+  end if;
+
+  delete from public.sessions
+  where owner_id = auth.uid();
+
+  get diagnostics v_count = row_count;
+  return v_count;
+end;
+$function$;
+
+revoke all on function public.end_all_owned_sessions() from public, anon, authenticated;
+revoke all on function public.delete_all_owned_sessions() from public, anon, authenticated;
+grant execute on function public.end_all_owned_sessions() to authenticated;
+grant execute on function public.delete_all_owned_sessions() to authenticated;
+
