@@ -67,19 +67,7 @@ begin
    end if;
  end if;
 
- -- Limit requests that try to create new identities.
- v_headers:=coalesce(nullif(current_setting('request.headers',true),'')::jsonb,'{}'::jsonb);
- v_ip:=coalesce(nullif(v_headers->>'cf-connecting-ip',''),nullif(v_headers->>'x-real-ip',''),'unknown');
- v_ip_hash:=md5(v_ip);
- insert into private.join_code_rate_limits as r(ip_hash,window_start,attempts) values(v_ip_hash,now(),1)
- on conflict(ip_hash) do update
-   set window_start=case when r.window_start<now()-interval '10 minutes' then now() else r.window_start end,
-       attempts=case when r.window_start<now()-interval '10 minutes' then 1 else r.attempts+1 end
- returning attempts into v_attempts;
- if v_attempts>12 then
-   raise exception using errcode='P0001', message='JOIN_RATE_LIMITED';
- end if;
-
+ -- Valid session joins are not counted against the failed-code lookup rate limit.
  select p.id into v_existing_participant_id from public.participants p
  where p.session_id=v_session_id and lower(btrim(p.name))=lower(v_name) limit 1;
  if v_existing_participant_id is not null then
