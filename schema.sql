@@ -32,7 +32,7 @@ begin
  if v_attempts>12 then return; end if;
  select s.id into v_session_id from public.sessions s where s.join_code=v_code and s.status in ('lobby','running') limit 1;
  if v_session_id is null then return; end if;
- insert into public.participants(session_id,name,last_seen_at) values(v_session_id,v_name,now()) returning id into v_participant_id;
+ insert into public.participants as inserted_participant(session_id,name,last_seen_at) values(v_session_id,v_name,now()) returning inserted_participant.id into v_participant_id;
  return query select s.id,s.title,s.survey_snapshot,s.status,s.current_slide,s.join_code,v_participant_id from public.sessions s where s.id=v_session_id and s.status in ('lobby','running');
 end;
 $function$;
