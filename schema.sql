@@ -16,24 +16,77 @@ create schema if not exists private;
 revoke all on schema private from public, anon, authenticated;
 create table if not exists private.join_code_rate_limits (ip_hash text primary key, window_start timestamptz not null default now(), attempts integer not null default 0);
 revoke all on table private.join_code_rate_limits from public, anon, authenticated;
-create or replace function public.join_session_by_code(p_join_code text, p_name text)
-returns table (id uuid, title text, survey_snapshot jsonb, status text, current_slide integer, join_code text, participant_id uuid)
+drop function if exists public.join_session_by_code(text,text,uuid);
+create or replace function public.join_session_by_code(p_join_code text,p_name text,p_participant_id uuid)
+returns table (id uuid,title text,survey_snapshot jsonb,status text,current_slide integer,join_code text,participant_id uuid)
 language plpgsql security definer set search_path = ''
 as $function$
-declare v_headers jsonb; v_ip text; v_ip_hash text; v_attempts integer; v_code text; v_name text; v_session_id uuid; v_participant_id uuid;
+declare
+ v_headers jsonb; v_ip text; v_ip_hash text; v_attempts integer;
+ v_code text; v_name text; v_session_id uuid; v_participant_id uuid;
 begin
- v_code:=upper(trim(coalesce(p_join_code,''))); v_name:=trim(coalesce(p_name,''));
+ v_code:=upper(trim(coalesce(p_join_code,'')));
+ v_name:=trim(coalesce(p_name,''));
  if v_code !~ '^[A-Z0-9]{5}$' or length(v_name)<1 or length(v_name)>40 then return; end if;
+
+ select s.id into v_session_id
+ from public.sessions s
+ where s.join_code=v_code and s.status in ('lobby','running')
+ limit 1;
+
+ if v_session_id is null then
+   -- Count failed join-code attempts to retain the existing rate limit.
+   v_headers:=coalesce(nullif(current_setting('request.headers',true),'')::jsonb,'{}'::jsonb);
+   v_ip:=coalesce(nullif(v_headers->>'cf-connecting-ip',''),nullif(v_headers->>'x-real-ip',''),'unknown');
+   v_ip_hash:=md5(v_ip);
+   insert into private.join_code_rate_limits as r(ip_hash,window_start,attempts)
+   values(v_ip_hash,now(),1)
+   on conflict(ip_hash) do update
+     set window_start=case when r.window_start<now()-interval '10 minutes' then now() else r.window_start end,
+         attempts=case when r.window_start<now()-interval '10 minutes' then 1 else r.attempts+1 end
+   returning attempts into v_attempts;
+   if v_attempts>12 then return; end if;
+   return;
+ end if;
+
+ -- Reuse the existing participant only when its ID, session and name match.
+ if p_participant_id is not null then
+   update public.participants as p
+   set last_seen_at=now()
+   where p.id=p_participant_id
+     and p.session_id=v_session_id
+     and lower(trim(p.name))=lower(v_name)
+   returning p.id into v_participant_id;
+
+   if v_participant_id is not null then
+     return query
+       select s.id,s.title,s.survey_snapshot,s.status,s.current_slide,s.join_code,v_participant_id
+       from public.sessions s
+       where s.id=v_session_id and s.status in ('lobby','running');
+     return;
+   end if;
+ end if;
+
+ -- New participants and stale/mismatched saved IDs follow the usual rate limit.
  v_headers:=coalesce(nullif(current_setting('request.headers',true),'')::jsonb,'{}'::jsonb);
- v_ip:=coalesce(nullif(v_headers->>'cf-connecting-ip',''),nullif(v_headers->>'x-real-ip',''),'unknown'); v_ip_hash:=md5(v_ip);
- insert into private.join_code_rate_limits as r(ip_hash,window_start,attempts) values(v_ip_hash,now(),1)
- on conflict(ip_hash) do update set window_start=case when r.window_start<now()-interval '10 minutes' then now() else r.window_start end,
- attempts=case when r.window_start<now()-interval '10 minutes' then 1 else r.attempts+1 end returning attempts into v_attempts;
+ v_ip:=coalesce(nullif(v_headers->>'cf-connecting-ip',''),nullif(v_headers->>'x-real-ip',''),'unknown');
+ v_ip_hash:=md5(v_ip);
+ insert into private.join_code_rate_limits as r(ip_hash,window_start,attempts)
+ values(v_ip_hash,now(),1)
+ on conflict(ip_hash) do update
+   set window_start=case when r.window_start<now()-interval '10 minutes' then now() else r.window_start end,
+       attempts=case when r.window_start<now()-interval '10 minutes' then 1 else r.attempts+1 end
+ returning attempts into v_attempts;
  if v_attempts>12 then return; end if;
- select s.id into v_session_id from public.sessions s where s.join_code=v_code and s.status in ('lobby','running') limit 1;
- if v_session_id is null then return; end if;
- insert into public.participants as inserted_participant(session_id,name,last_seen_at) values(v_session_id,v_name,now()) returning inserted_participant.id into v_participant_id;
- return query select s.id,s.title,s.survey_snapshot,s.status,s.current_slide,s.join_code,v_participant_id from public.sessions s where s.id=v_session_id and s.status in ('lobby','running');
+
+ insert into public.participants as inserted_participant(session_id,name,last_seen_at)
+ values(v_session_id,v_name,now())
+ returning inserted_participant.id into v_participant_id;
+
+ return query
+ select s.id,s.title,s.survey_snapshot,s.status,s.current_slide,s.join_code,v_participant_id
+ from public.sessions s
+ where s.id=v_session_id and s.status in ('lobby','running');
 end;
 $function$;
 drop function if exists public.get_participant_session(uuid,uuid);
@@ -48,10 +101,10 @@ returns boolean language sql stable security definer set search_path=''
 as $function$
  select exists(select 1 from public.sessions s join public.participants p on p.session_id=s.id where s.id=p_session_id and p.id=p_participant_id and s.status='running');
 $function$;
-revoke all on function public.join_session_by_code(text,text) from public,anon,authenticated;
+revoke all on function public.join_session_by_code(text,text,uuid) from public,anon,authenticated;
 revoke all on function public.get_participant_session(uuid,uuid) from public,anon,authenticated;
 revoke all on function private.can_submit_response(uuid,uuid) from public,anon,authenticated;
-grant execute on function public.join_session_by_code(text,text) to anon;
+grant execute on function public.join_session_by_code(text,text,uuid) to anon;
 grant execute on function public.get_participant_session(uuid,uuid) to anon;
 grant usage on schema private to anon,authenticated;
 grant execute on function private.can_submit_response(uuid,uuid) to anon;
