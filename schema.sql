@@ -9,6 +9,7 @@ create table if not exists public.sessions (id uuid primary key default gen_rand
 create table if not exists public.participants (id uuid primary key default gen_random_uuid(), session_id uuid not null references public.sessions(id) on delete cascade, name text not null, joined_at timestamptz not null default now(), last_seen_at timestamptz not null default now());
 create table if not exists public.responses (id uuid primary key default gen_random_uuid(), session_id uuid not null references public.sessions(id) on delete cascade, participant_id uuid not null references public.participants(id) on delete cascade, slide_index integer not null, answer jsonb not null, created_at timestamptz not null default now(), updated_at timestamptz not null default now(), unique(session_id, participant_id, slide_index));
 create index if not exists surveys_owner_id_idx on public.surveys(owner_id); create index if not exists sessions_owner_id_idx on public.sessions(owner_id); create index if not exists sessions_survey_id_idx on public.sessions(survey_id); create index if not exists participants_session_id_idx on public.participants(session_id); create index if not exists responses_session_id_idx on public.responses(session_id);
+create unique index if not exists participants_session_normalized_name_uidx on public.participants(session_id, lower(btrim(name)));
 alter table public.surveys enable row level security; alter table public.sessions enable row level security; alter table public.participants enable row level security; alter table public.responses enable row level security;
 
 -- Secure student access via narrow RPCs; never expose sessions directly to anon.
@@ -24,69 +25,77 @@ as $function$
 declare
  v_headers jsonb; v_ip text; v_ip_hash text; v_attempts integer;
  v_code text; v_name text; v_session_id uuid; v_participant_id uuid;
+ v_existing_participant_id uuid; v_existing_name text;
 begin
  v_code:=upper(trim(coalesce(p_join_code,'')));
  v_name:=trim(coalesce(p_name,''));
- if v_code !~ '^[A-Z0-9]{5}$' or length(v_name)<1 or length(v_name)>40 then return; end if;
+ if v_code !~ '^[A-Z0-9]{5}$' or length(v_name)<1 or length(v_name)>40 then
+   raise exception using errcode='P0001', message='INVALID_JOIN_INPUT';
+ end if;
 
- select s.id into v_session_id
- from public.sessions s
- where s.join_code=v_code and s.status in ('lobby','running')
- limit 1;
+ select s.id into v_session_id from public.sessions s
+ where s.join_code=v_code and s.status in ('lobby','running') limit 1;
 
  if v_session_id is null then
-   -- Count failed join-code attempts to retain the existing rate limit.
    v_headers:=coalesce(nullif(current_setting('request.headers',true),'')::jsonb,'{}'::jsonb);
    v_ip:=coalesce(nullif(v_headers->>'cf-connecting-ip',''),nullif(v_headers->>'x-real-ip',''),'unknown');
    v_ip_hash:=md5(v_ip);
-   insert into private.join_code_rate_limits as r(ip_hash,window_start,attempts)
-   values(v_ip_hash,now(),1)
+   insert into private.join_code_rate_limits as r(ip_hash,window_start,attempts) values(v_ip_hash,now(),1)
    on conflict(ip_hash) do update
      set window_start=case when r.window_start<now()-interval '10 minutes' then now() else r.window_start end,
          attempts=case when r.window_start<now()-interval '10 minutes' then 1 else r.attempts+1 end
    returning attempts into v_attempts;
    if v_attempts>12 then return; end if;
-   return;
+   raise exception using errcode='P0001', message='SESSION_NOT_FOUND';
  end if;
 
- -- Reuse the existing participant only when its ID, session and name match.
+ -- A browser that already joined this session must keep the same name.
  if p_participant_id is not null then
-   update public.participants as p
-   set last_seen_at=now()
-   where p.id=p_participant_id
-     and p.session_id=v_session_id
-     and lower(trim(p.name))=lower(v_name)
-   returning p.id into v_participant_id;
+   select p.name into v_existing_name from public.participants p
+   where p.id=p_participant_id and p.session_id=v_session_id;
 
-   if v_participant_id is not null then
-     return query
-       select s.id,s.title,s.survey_snapshot,s.status,s.current_slide,s.join_code,v_participant_id
-       from public.sessions s
-       where s.id=v_session_id and s.status in ('lobby','running');
+   if found then
+     if lower(btrim(v_existing_name))<>lower(v_name) then
+       raise exception using errcode='P0001', message='PARTICIPANT_NAME_MISMATCH';
+     end if;
+     update public.participants p set last_seen_at=now()
+     where p.id=p_participant_id and p.session_id=v_session_id;
+
+     return query select s.id,s.title,s.survey_snapshot,s.status,s.current_slide,s.join_code,p_participant_id
+     from public.sessions s where s.id=v_session_id and s.status in ('lobby','running');
      return;
    end if;
  end if;
 
- -- New participants and stale/mismatched saved IDs follow the usual rate limit.
+ -- Limit requests that try to create new identities.
  v_headers:=coalesce(nullif(current_setting('request.headers',true),'')::jsonb,'{}'::jsonb);
  v_ip:=coalesce(nullif(v_headers->>'cf-connecting-ip',''),nullif(v_headers->>'x-real-ip',''),'unknown');
  v_ip_hash:=md5(v_ip);
- insert into private.join_code_rate_limits as r(ip_hash,window_start,attempts)
- values(v_ip_hash,now(),1)
+ insert into private.join_code_rate_limits as r(ip_hash,window_start,attempts) values(v_ip_hash,now(),1)
  on conflict(ip_hash) do update
    set window_start=case when r.window_start<now()-interval '10 minutes' then now() else r.window_start end,
        attempts=case when r.window_start<now()-interval '10 minutes' then 1 else r.attempts+1 end
  returning attempts into v_attempts;
- if v_attempts>12 then return; end if;
+ if v_attempts>12 then
+   raise exception using errcode='P0001', message='JOIN_RATE_LIMITED';
+ end if;
 
- insert into public.participants as inserted_participant(session_id,name,last_seen_at)
- values(v_session_id,v_name,now())
- returning inserted_participant.id into v_participant_id;
+ select p.id into v_existing_participant_id from public.participants p
+ where p.session_id=v_session_id and lower(btrim(p.name))=lower(v_name) limit 1;
+ if v_existing_participant_id is not null then
+   raise exception using errcode='P0001', message='PARTICIPANT_NAME_TAKEN';
+ end if;
 
- return query
- select s.id,s.title,s.survey_snapshot,s.status,s.current_slide,s.join_code,v_participant_id
- from public.sessions s
- where s.id=v_session_id and s.status in ('lobby','running');
+ begin
+   insert into public.participants as inserted_participant(session_id,name,last_seen_at)
+   values(v_session_id,v_name,now())
+   returning inserted_participant.id into v_participant_id;
+ exception when unique_violation then
+   raise exception using errcode='P0001', message='PARTICIPANT_NAME_TAKEN';
+ end;
+
+ return query select s.id,s.title,s.survey_snapshot,s.status,s.current_slide,s.join_code,v_participant_id
+ from public.sessions s where s.id=v_session_id and s.status in ('lobby','running');
 end;
 $function$;
 drop function if exists public.get_participant_session(uuid,uuid);
