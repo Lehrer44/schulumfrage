@@ -9,7 +9,7 @@
 :root{--bg:#f1efe6;--line:#93856a;--text:#5c5547;--muted:#90836b;--accent:#918469;--accent-dark:#6e624e;--danger:#ef726b;--ok:#22a867}
 *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:"Avenir Next",Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
 body{min-height:100vh}.wrap{max-width:1200px;margin:0 auto;padding:28px 22px 40px}.top{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:24px}.title{font-size:28px;font-weight:500;color:var(--muted)}.btn{border:2px solid var(--line);border-radius:8px;background:rgba(246,244,236,.56);color:var(--muted);font:inherit;font-weight:600;padding:9px 14px;cursor:pointer}.btn:hover{background:#e9e5d8;color:var(--accent-dark)}.btn.accent{background:var(--accent);border-color:var(--accent);color:#fff}.btn.danger{background:var(--danger);border-color:var(--danger);color:#fff}.status{font-size:13px;color:var(--muted)}.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--ok);margin-right:6px}
-.columns{display:grid;grid-template-columns:1fr 1fr;gap:22px}#sessionsPanel{grid-column:1/-1}.sessionCode{font-size:13px;font-weight:700;letter-spacing:.12em;color:var(--accent-dark)}.sessionState{display:inline-block;margin-top:4px;font-size:12px;color:var(--muted)}.panel{border:2px solid var(--line);border-radius:20px;padding:20px;background:rgba(246,244,236,.18)}.panelHeader{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px}.panel h2{margin:0;color:var(--muted);font-size:27px;font-weight:500}.plus{width:38px;height:38px;padding:0;border:0;border-radius:9px;background:var(--accent);color:#fff;font-size:23px;line-height:1}.list{display:grid;gap:10px}.item{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center;border:2px solid var(--line);border-radius:11px;padding:12px;background:rgba(247,244,234,.55)}.itemName{font-weight:600;color:var(--text);overflow-wrap:anywhere}.itemMeta{font-size:13px;color:var(--muted);margin-top:3px}.actions{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}.actions .btn{padding:7px 10px;font-size:13px}.empty{border:2px dashed var(--line);border-radius:11px;padding:28px 16px;text-align:center;color:var(--muted)}.toast{position:fixed;right:18px;bottom:18px;background:#efebe0;border:2px solid var(--line);border-radius:10px;padding:12px 15px;max-width:420px;z-index:30}
+.columns{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-areas:"surveys games" "sessions open-games";gap:22px}#surveyPanel{grid-area:surveys}#gamePanel{grid-area:games}#sessionsPanel{grid-area:sessions}#openGamesPanel{grid-area:open-games}.sessionCode{font-size:13px;font-weight:700;letter-spacing:.12em;color:var(--accent-dark)}.sessionState{display:inline-block;margin-top:4px;font-size:12px;color:var(--muted)}.panel{border:2px solid var(--line);border-radius:20px;padding:20px;background:rgba(246,244,236,.18)}.panelHeader{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px}.panel h2{margin:0;color:var(--muted);font-size:27px;font-weight:500}.plus{width:38px;height:38px;padding:0;border:0;border-radius:9px;background:var(--accent);color:#fff;font-size:23px;line-height:1}.list{display:grid;gap:10px}.item{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center;border:2px solid var(--line);border-radius:11px;padding:12px;background:rgba(247,244,234,.55)}.itemName{font-weight:600;color:var(--text);overflow-wrap:anywhere}.itemMeta{font-size:13px;color:var(--muted);margin-top:3px}.actions{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}.actions .btn{padding:7px 10px;font-size:13px}.empty{border:2px dashed var(--line);border-radius:11px;padding:28px 16px;text-align:center;color:var(--muted)}.toast{position:fixed;right:18px;bottom:18px;background:#efebe0;border:2px solid var(--line);border-radius:10px;padding:12px 15px;max-width:420px;z-index:30}
 .hidden{display:none!important}
 .topActions{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
 .modalBackdrop{position:fixed;inset:0;z-index:20;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(36,32,25,.48)}
@@ -31,7 +31,7 @@ body{min-height:100vh}.wrap{max-width:1200px;margin:0 auto;padding:28px 22px 40p
 .settingsStatus{min-height:20px;margin-top:10px;font-size:13px;color:var(--muted)}
 .btn:disabled{opacity:.55;cursor:wait}
 @media(max-width:520px){.modalBackdrop{padding:10px}.settingsDialog{padding:17px;border-radius:15px}.statsGrid{gap:8px}.statCard{padding:12px}.statValue{font-size:30px}.topActions{justify-content:flex-end}.topActions .btn{padding:8px 10px;font-size:14px}}
-@media(max-width:800px){.columns{grid-template-columns:1fr}.wrap{padding:20px 16px 30px}.top{align-items:flex-start}.item{grid-template-columns:1fr}.actions{justify-content:flex-start}}
+@media(max-width:800px){.columns{grid-template-columns:1fr;grid-template-areas:"surveys" "sessions" "games" "open-games"}.wrap{padding:20px 16px 30px}.top{align-items:flex-start}.item{grid-template-columns:1fr}.actions{justify-content:flex-start}}
 </style>
 </head>
 <body>
@@ -45,13 +45,17 @@ body{min-height:100vh}.wrap{max-width:1200px;margin:0 auto;padding:28px 22px 40p
 <div class="panelHeader"><div><h2>Offene Sitzungen</h2><div class="itemMeta">Sitzungen fortsetzen oder den Teilnahmecode erneut anzeigen</div></div><button class="btn" id="refreshSessionsBtn" type="button">Aktualisieren</button></div>
 <div class="list" id="activeSessionList"><div class="empty">Sitzungen werden geladen …</div></div>
 </section>
-<section class="panel">
+<section class="panel" id="surveyPanel">
 <div class="panelHeader"><h2>Umfragen</h2><button class="plus" id="newSurveyBtn" title="Neue Umfrage">＋</button></div>
 <div class="list" id="surveyList"></div>
 </section>
-<section class="panel">
+<section class="panel" id="gamePanel">
 <div class="panelHeader"><h2>Spiele</h2><button class="plus" id="newGameBtn" title="Neues Spiel" disabled>＋</button></div>
 <div class="list" id="gameList"><div class="empty">Spiele werden im nächsten Schritt ergänzt.</div></div>
+</section>
+<section class="panel" id="openGamesPanel">
+<div class="panelHeader"><h2>Offene Spiele</h2></div>
+<div class="list" id="openGameList"><div class="empty">Hier werden später offene Spiele angezeigt.</div></div>
 </section>
 </main>
 </div>
