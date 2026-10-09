@@ -36,11 +36,12 @@ begin
  return query select s.id,s.title,s.survey_snapshot,s.status,s.current_slide,s.join_code,v_participant_id from public.sessions s where s.id=v_session_id and s.status in ('lobby','running');
 end;
 $function$;
-create or replace function public.get_participant_session(p_session_id uuid,p_participant_id uuid)
-returns table(id uuid,title text,survey_snapshot jsonb,status text,current_slide integer,join_code text)
+drop function if exists public.get_participant_session(uuid,uuid);
+create function public.get_participant_session(p_session_id uuid,p_participant_id uuid)
+returns table(id uuid,title text,survey_snapshot jsonb,status text,current_slide integer,join_code text,updated_at timestamptz)
 language sql security definer set search_path=''
 as $function$
- select s.id,s.title,s.survey_snapshot,s.status,s.current_slide,s.join_code from public.sessions s join public.participants p on p.session_id=s.id where s.id=p_session_id and p.id=p_participant_id;
+ select s.id,s.title,s.survey_snapshot,s.status,s.current_slide,s.join_code,s.updated_at from public.sessions s join public.participants p on p.session_id=s.id where s.id=p_session_id and p.id=p_participant_id;
 $function$;
 create or replace function private.can_submit_response(p_session_id uuid,p_participant_id uuid)
 returns boolean language sql stable security definer set search_path=''
