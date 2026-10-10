@@ -8,7 +8,7 @@ create table if not exists public.surveys (id uuid primary key default gen_rando
 create table if not exists public.sessions (id uuid primary key default gen_random_uuid(), survey_id uuid not null references public.surveys(id) on delete cascade, owner_id uuid not null references auth.users(id) on delete cascade, title text not null, survey_snapshot jsonb not null default '[]'::jsonb, status text not null default 'lobby' check (status in ('lobby','running','ended')), current_slide integer not null default 0, join_code text not null unique, created_at timestamptz not null default now(), started_at timestamptz, updated_at timestamptz not null default now());
 create table if not exists public.participants (id uuid primary key default gen_random_uuid(), session_id uuid not null references public.sessions(id) on delete cascade, name text not null, joined_at timestamptz not null default now(), last_seen_at timestamptz not null default now());
 create table if not exists public.responses (id uuid primary key default gen_random_uuid(), session_id uuid not null references public.sessions(id) on delete cascade, participant_id uuid not null references public.participants(id) on delete cascade, slide_index integer not null, answer jsonb not null, created_at timestamptz not null default now(), updated_at timestamptz not null default now(), unique(session_id, participant_id, slide_index));
-create index if not exists surveys_owner_id_idx on public.surveys(owner_id); create index if not exists sessions_owner_id_idx on public.sessions(owner_id); create index if not exists sessions_survey_id_idx on public.sessions(survey_id); create index if not exists participants_session_id_idx on public.participants(session_id); create index if not exists responses_session_id_idx on public.responses(session_id);
+create index if not exists surveys_owner_id_idx on public.surveys(owner_id); create index if not exists sessions_owner_id_idx on public.sessions(owner_id); create index if not exists sessions_survey_id_idx on public.sessions(survey_id); create index if not exists participants_session_id_idx on public.participants(session_id); create index if not exists responses_session_id_idx on public.responses(session_id); create index if not exists responses_participant_id_idx on public.responses(participant_id);
 create unique index if not exists participants_session_normalized_name_uidx on public.participants(session_id, lower(btrim(name)));
 alter table public.surveys enable row level security; alter table public.sessions enable row level security; alter table public.participants enable row level security; alter table public.responses enable row level security;
 
@@ -16,6 +16,7 @@ alter table public.surveys enable row level security; alter table public.session
 create schema if not exists private;
 revoke all on schema private from public, anon, authenticated;
 create table if not exists private.join_code_rate_limits (ip_hash text primary key, window_start timestamptz not null default now(), attempts integer not null default 0);
+alter table private.join_code_rate_limits enable row level security;
 revoke all on table private.join_code_rate_limits from public, anon, authenticated;
 drop function if exists public.join_session_by_code(text,text);
 create or replace function public.join_session_by_code(p_join_code text,p_name text,p_participant_id uuid)
@@ -106,20 +107,29 @@ as $function$
    and r.slide_index=p_slide_index and s.status in ('lobby','running')
  limit 1;
 $function$;
-create or replace function private.can_submit_response(p_session_id uuid,p_participant_id uuid)
+-- Remove the dependent policy first so this script remains safe to re-run.
+drop policy if exists responses_anon_insert on public.responses;
+drop function if exists private.can_submit_response(uuid,uuid);
+create or replace function private.can_submit_response(p_session_id uuid,p_participant_id uuid,p_slide_index integer)
 returns boolean language sql stable security definer set search_path=''
 as $function$
- select exists(select 1 from public.sessions s join public.participants p on p.session_id=s.id where s.id=p_session_id and p.id=p_participant_id and s.status='running');
+ select exists(
+   select 1 from public.sessions s
+   join public.participants p on p.session_id=s.id
+   where s.id=p_session_id and p.id=p_participant_id
+     and s.status='running' and s.current_slide=p_slide_index
+     and p_slide_index>=0 and p_slide_index<jsonb_array_length(s.survey_snapshot)
+ );
 $function$;
 revoke all on function public.join_session_by_code(text,text,uuid) from public,anon,authenticated;
 revoke all on function public.get_participant_session(uuid,uuid) from public,anon,authenticated;
 revoke all on function public.get_participant_response(uuid,uuid,integer) from public,anon,authenticated;
-revoke all on function private.can_submit_response(uuid,uuid) from public,anon,authenticated;
+revoke all on function private.can_submit_response(uuid,uuid,integer) from public,anon,authenticated;
 grant execute on function public.join_session_by_code(text,text,uuid) to anon;
 grant execute on function public.get_participant_session(uuid,uuid) to anon;
 grant execute on function public.get_participant_response(uuid,uuid,integer) to anon;
 grant usage on schema private to anon,authenticated;
-grant execute on function private.can_submit_response(uuid,uuid) to anon;
+grant execute on function private.can_submit_response(uuid,uuid,integer) to anon;
 drop policy if exists surveys_select on public.surveys; create policy surveys_select on public.surveys for select to authenticated using ((select auth.uid())=owner_id);
 drop policy if exists surveys_insert on public.surveys; create policy surveys_insert on public.surveys for insert to authenticated with check ((select auth.uid())=owner_id);
 drop policy if exists surveys_update on public.surveys; create policy surveys_update on public.surveys for update to authenticated using ((select auth.uid())=owner_id) with check ((select auth.uid())=owner_id);
@@ -132,7 +142,7 @@ drop policy if exists participants_teacher_select on public.participants; create
 drop policy if exists participants_anon_insert on public.participants;
 drop policy if exists responses_teacher_select on public.responses; create policy responses_teacher_select on public.responses for select to authenticated using (exists(select 1 from public.sessions s where s.id=session_id and s.owner_id=(select auth.uid())));
 drop policy if exists responses_teacher_insert on public.responses; create policy responses_teacher_insert on public.responses for insert to authenticated with check (exists(select 1 from public.sessions s where s.id=session_id and s.owner_id=(select auth.uid())));
-drop policy if exists responses_anon_insert on public.responses; create policy responses_anon_insert on public.responses for insert to anon with check (private.can_submit_response(session_id, participant_id));
+drop policy if exists responses_anon_insert on public.responses; create policy responses_anon_insert on public.responses for insert to anon with check (private.can_submit_response(session_id, participant_id, slide_index));
 drop policy if exists responses_teacher_delete on public.responses; create policy responses_teacher_delete on public.responses for delete to authenticated using (exists(select 1 from public.sessions s where s.id=session_id and s.owner_id=(select auth.uid())));
 
 create or replace function public.set_updated_at() returns trigger language plpgsql set search_path = '' as $$ begin new.updated_at=pg_catalog.now(); return new; end; $$;
@@ -211,6 +221,43 @@ begin
   return v_count;
 end;
 $function$;
+
+create or replace function public.restart_owned_session(p_session_id uuid)
+returns setof public.sessions
+language plpgsql
+security definer
+set search_path = ''
+as $function$
+declare
+  v_owner_id uuid;
+begin
+  if auth.uid() is null then
+    raise exception 'Not authenticated';
+  end if;
+
+  select s.owner_id into v_owner_id
+  from public.sessions s
+  where s.id = p_session_id
+  for update;
+
+  if v_owner_id is null or v_owner_id <> auth.uid() then
+    raise exception 'Session not found or not owned by current user';
+  end if;
+
+  delete from public.responses where session_id = p_session_id;
+
+  update public.sessions
+  set current_slide = 0,
+      status = 'running',
+      started_at = coalesce(started_at, pg_catalog.now()),
+      updated_at = pg_catalog.now()
+  where id = p_session_id;
+  return query select * from public.sessions where id = p_session_id;
+end;
+$function$;
+
+revoke all on function public.restart_owned_session(uuid) from public, anon, authenticated;
+grant execute on function public.restart_owned_session(uuid) to authenticated;
 
 revoke all on function public.end_all_owned_sessions() from public, anon, authenticated;
 revoke all on function public.delete_all_owned_sessions() from public, anon, authenticated;
