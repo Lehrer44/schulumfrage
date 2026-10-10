@@ -107,6 +107,8 @@ as $function$
    and r.slide_index=p_slide_index and s.status in ('lobby','running')
  limit 1;
 $function$;
+-- Remove the dependent policy first so this script remains safe to re-run.
+drop policy if exists responses_anon_insert on public.responses;
 drop function if exists private.can_submit_response(uuid,uuid);
 create or replace function private.can_submit_response(p_session_id uuid,p_participant_id uuid,p_slide_index integer)
 returns boolean language sql stable security definer set search_path=''
