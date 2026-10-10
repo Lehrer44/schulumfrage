@@ -242,8 +242,7 @@ begin
       status = 'running',
       started_at = coalesce(started_at, pg_catalog.now()),
       updated_at = pg_catalog.now()
-  where id = p_session_id
-  returning *;
+  where id = p_session_id;
   return query select * from public.sessions where id = p_session_id;
 end;
 $function$;
