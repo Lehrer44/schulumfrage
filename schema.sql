@@ -107,20 +107,27 @@ as $function$
    and r.slide_index=p_slide_index and s.status in ('lobby','running')
  limit 1;
 $function$;
-create or replace function private.can_submit_response(p_session_id uuid,p_participant_id uuid)
+drop function if exists private.can_submit_response(uuid,uuid);
+create or replace function private.can_submit_response(p_session_id uuid,p_participant_id uuid,p_slide_index integer)
 returns boolean language sql stable security definer set search_path=''
 as $function$
- select exists(select 1 from public.sessions s join public.participants p on p.session_id=s.id where s.id=p_session_id and p.id=p_participant_id and s.status='running');
+ select exists(
+   select 1 from public.sessions s
+   join public.participants p on p.session_id=s.id
+   where s.id=p_session_id and p.id=p_participant_id
+     and s.status='running' and s.current_slide=p_slide_index
+     and p_slide_index>=0 and p_slide_index<jsonb_array_length(s.survey_snapshot)
+ );
 $function$;
 revoke all on function public.join_session_by_code(text,text,uuid) from public,anon,authenticated;
 revoke all on function public.get_participant_session(uuid,uuid) from public,anon,authenticated;
 revoke all on function public.get_participant_response(uuid,uuid,integer) from public,anon,authenticated;
-revoke all on function private.can_submit_response(uuid,uuid) from public,anon,authenticated;
+revoke all on function private.can_submit_response(uuid,uuid,integer) from public,anon,authenticated;
 grant execute on function public.join_session_by_code(text,text,uuid) to anon;
 grant execute on function public.get_participant_session(uuid,uuid) to anon;
 grant execute on function public.get_participant_response(uuid,uuid,integer) to anon;
 grant usage on schema private to anon,authenticated;
-grant execute on function private.can_submit_response(uuid,uuid) to anon;
+grant execute on function private.can_submit_response(uuid,uuid,integer) to anon;
 drop policy if exists surveys_select on public.surveys; create policy surveys_select on public.surveys for select to authenticated using ((select auth.uid())=owner_id);
 drop policy if exists surveys_insert on public.surveys; create policy surveys_insert on public.surveys for insert to authenticated with check ((select auth.uid())=owner_id);
 drop policy if exists surveys_update on public.surveys; create policy surveys_update on public.surveys for update to authenticated using ((select auth.uid())=owner_id) with check ((select auth.uid())=owner_id);
@@ -133,7 +140,7 @@ drop policy if exists participants_teacher_select on public.participants; create
 drop policy if exists participants_anon_insert on public.participants;
 drop policy if exists responses_teacher_select on public.responses; create policy responses_teacher_select on public.responses for select to authenticated using (exists(select 1 from public.sessions s where s.id=session_id and s.owner_id=(select auth.uid())));
 drop policy if exists responses_teacher_insert on public.responses; create policy responses_teacher_insert on public.responses for insert to authenticated with check (exists(select 1 from public.sessions s where s.id=session_id and s.owner_id=(select auth.uid())));
-drop policy if exists responses_anon_insert on public.responses; create policy responses_anon_insert on public.responses for insert to anon with check (private.can_submit_response(session_id, participant_id));
+drop policy if exists responses_anon_insert on public.responses; create policy responses_anon_insert on public.responses for insert to anon with check (private.can_submit_response(session_id, participant_id, slide_index));
 drop policy if exists responses_teacher_delete on public.responses; create policy responses_teacher_delete on public.responses for delete to authenticated using (exists(select 1 from public.sessions s where s.id=session_id and s.owner_id=(select auth.uid())));
 
 create or replace function public.set_updated_at() returns trigger language plpgsql set search_path = '' as $$ begin new.updated_at=pg_catalog.now(); return new; end; $$;
