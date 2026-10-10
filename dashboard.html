@@ -9,7 +9,7 @@
 :root{--bg:#f1efe6;--line:#93856a;--text:#5c5547;--muted:#90836b;--accent:#918469;--accent-dark:#6e624e;--danger:#ef726b;--ok:#22a867}
 *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:"Avenir Next",Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
 body{min-height:100vh}.wrap{max-width:1200px;margin:0 auto;padding:28px 22px 40px}.top{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:24px}.title{font-size:28px;font-weight:500;color:var(--muted)}.btn{border:2px solid var(--line);border-radius:8px;background:rgba(246,244,236,.56);color:var(--muted);font:inherit;font-weight:600;padding:9px 14px;cursor:pointer}.btn:hover{background:#e9e5d8;color:var(--accent-dark)}.btn.accent{background:var(--accent);border-color:var(--accent);color:#fff}.btn.danger{background:var(--danger);border-color:var(--danger);color:#fff}.status{font-size:13px;color:var(--muted)}.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--ok);margin-right:6px}
-.columns{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-areas:"surveys games" "sessions open-games";gap:22px}#surveyPanel{grid-area:surveys}#gamePanel{grid-area:games}#sessionsPanel{grid-area:sessions}#openGamesPanel{grid-area:open-games}.sessionCode{font-size:13px;font-weight:700;letter-spacing:.12em;color:var(--accent-dark)}.sessionState{display:inline-block;margin-top:4px;font-size:12px;color:var(--muted)}.panel{border:2px solid var(--line);border-radius:20px;padding:20px;background:rgba(246,244,236,.18)}.panelHeader{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px}.panel h2{margin:0;color:var(--muted);font-size:27px;font-weight:500}.plus{width:38px;height:38px;padding:0;border:0;border-radius:9px;background:var(--accent);color:#fff;font-size:23px;line-height:1}.list{display:grid;gap:10px}.item{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center;border:2px solid var(--line);border-radius:11px;padding:12px;background:rgba(247,244,234,.55)}.itemName{font-weight:600;color:var(--text);overflow-wrap:anywhere}.itemMeta{font-size:13px;color:var(--muted);margin-top:3px}.actions{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}.actions .btn{padding:7px 10px;font-size:13px}.empty{border:2px dashed var(--line);border-radius:11px;padding:28px 16px;text-align:center;color:var(--muted)}.toast{position:fixed;right:18px;bottom:18px;background:#efebe0;border:2px solid var(--line);border-radius:10px;padding:12px 15px;max-width:420px;z-index:30}
+.columns{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-areas:"surveys games" "sessions open-games" "ended ended";gap:22px}#surveyPanel{grid-area:surveys}#gamePanel{grid-area:games}#sessionsPanel{grid-area:sessions}#endedPanel{grid-area:ended}#openGamesPanel{grid-area:open-games}.sessionCode{font-size:13px;font-weight:700;letter-spacing:.12em;color:var(--accent-dark)}.sessionState{display:inline-block;margin-top:4px;font-size:12px;color:var(--muted)}.panel{border:2px solid var(--line);border-radius:20px;padding:20px;background:rgba(246,244,236,.18)}.panelHeader{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px}.panel h2{margin:0;color:var(--muted);font-size:27px;font-weight:500}.plus{width:38px;height:38px;padding:0;border:0;border-radius:9px;background:var(--accent);color:#fff;font-size:23px;line-height:1}.list{display:grid;gap:10px}.item{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center;border:2px solid var(--line);border-radius:11px;padding:12px;background:rgba(247,244,234,.55)}.itemName{font-weight:600;color:var(--text);overflow-wrap:anywhere}.itemMeta{font-size:13px;color:var(--muted);margin-top:3px}.actions{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}.actions .btn{padding:7px 10px;font-size:13px}.empty{border:2px dashed var(--line);border-radius:11px;padding:28px 16px;text-align:center;color:var(--muted)}.toast{position:fixed;right:18px;bottom:18px;background:#efebe0;border:2px solid var(--line);border-radius:10px;padding:12px 15px;max-width:420px;z-index:30}
 .hidden{display:none!important}
 .topActions{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
 .modalBackdrop{position:fixed;inset:0;z-index:20;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(36,32,25,.48)}
@@ -31,7 +31,7 @@ body{min-height:100vh}.wrap{max-width:1200px;margin:0 auto;padding:28px 22px 40p
 .settingsStatus{min-height:20px;margin-top:10px;font-size:13px;color:var(--muted)}
 .btn:disabled{opacity:.55;cursor:wait}
 @media(max-width:520px){.modalBackdrop{padding:10px}.settingsDialog{padding:17px;border-radius:15px}.statsGrid{gap:8px}.statCard{padding:12px}.statValue{font-size:30px}.topActions{justify-content:flex-end}.topActions .btn{padding:8px 10px;font-size:14px}}
-@media(max-width:800px){.columns{grid-template-columns:1fr;grid-template-areas:"surveys" "sessions" "games" "open-games"}.wrap{padding:20px 16px 30px}.top{align-items:flex-start}.item{grid-template-columns:1fr}.actions{justify-content:flex-start}}
+@media(max-width:800px){.columns{grid-template-columns:1fr;grid-template-areas:"surveys" "sessions" "ended" "games" "open-games"}.wrap{padding:20px 16px 30px}.top{align-items:flex-start}.item{grid-template-columns:1fr}.actions{justify-content:flex-start}}
 </style>
 </head>
 <body>
@@ -44,6 +44,10 @@ body{min-height:100vh}.wrap{max-width:1200px;margin:0 auto;padding:28px 22px 40p
 <section class="panel" id="sessionsPanel">
 <div class="panelHeader"><div><h2>Offene Sitzungen</h2><div class="itemMeta">Sitzungen fortsetzen oder den Teilnahmecode erneut anzeigen</div></div><button class="btn" id="refreshSessionsBtn" type="button">Aktualisieren</button></div>
 <div class="list" id="activeSessionList"><div class="empty">Sitzungen werden geladen …</div></div>
+</section>
+<section class="panel" id="endedPanel">
+<div class="panelHeader"><div><h2>Durchgeführte Umfragen</h2><div class="itemMeta">Abgeschlossene Durchläufe herunterladen und in Excel auswerten</div></div><button class="btn" id="refreshEndedBtn" type="button">Aktualisieren</button></div>
+<div class="list" id="endedSessionList"><div class="empty">Abgeschlossene Umfragen werden geladen …</div></div>
 </section>
 <section class="panel" id="surveyPanel">
 <div class="panelHeader"><h2>Umfragen</h2><button class="plus" id="newSurveyBtn" title="Neue Umfrage">＋</button></div>
@@ -90,6 +94,7 @@ const SUPABASE_KEY='sb_publishable_eY5NBW8EJHuyO2Ic5S3HBQ_tSwErhp-';
 const db=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 const $=id=>document.getElementById(id);
 let surveys=[];
+let endedSessionRequestToken=0;
 function toast(msg){$('toast').textContent=msg;$('toast').classList.remove('hidden');clearTimeout(window.__toast);window.__toast=setTimeout(()=>$('toast').classList.add('hidden'),3200)}
 function generateJoinCode(){const alphabet='0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';let code='';while(code.length<5){const bytes=new Uint8Array(16);crypto.getRandomValues(bytes);for(const byte of bytes){if(byte<252){code+=alphabet[byte%36];if(code.length===5)break}}}return code}
 async function createSessionWithUniqueCode(payload){for(let attempt=0;attempt<8;attempt++){const {data,error}=await db.from('sessions').insert({...payload,join_code:generateJoinCode()}).select().single();if(!error)return {data,error:null};if(error.code!=='23505')return {data:null,error}}return {data:null,error:{message:'Es konnte nach mehreren Versuchen kein freier Teilnahmecode erzeugt werden. Bitte erneut versuchen.'}}}
@@ -127,6 +132,162 @@ async function loadActiveSessions(){
     root.appendChild(el);
   });
 }
+
+async function loadEndedSessions(){
+  const root=$('endedSessionList');
+  if(!root)return;
+  const requestToken=++endedSessionRequestToken;
+  const {data,error}=await db.from('sessions')
+    .select('id,title,status,join_code,created_at,started_at,updated_at,survey_snapshot')
+    .eq('status','ended')
+    .order('updated_at',{ascending:false});
+  if(requestToken!==endedSessionRequestToken)return;
+  if(error){
+    root.innerHTML='<div class="empty">Abgeschlossene Umfragen konnten nicht geladen werden.</div>';
+    toast('Abgeschlossene Umfragen konnten nicht geladen werden: '+error.message);
+    return;
+  }
+  const sessions=data||[];
+  root.innerHTML='';
+  if(!sessions.length){
+    root.innerHTML='<div class="empty">Noch keine durchgeführten Umfragen. Beendete Sitzungen erscheinen hier automatisch.</div>';
+    return;
+  }
+  sessions.forEach(session=>{
+    const el=document.createElement('div');
+    el.className='item';
+    const slides=Array.isArray(session.survey_snapshot)?session.survey_snapshot:[];
+    const started=session.started_at||session.created_at;
+    const date=started?new Date(started).toLocaleString('de-DE',{dateStyle:'medium',timeStyle:'short'}):'';
+    el.innerHTML='<div><div class="itemName">'+esc(session.title||'Umfrage')+'</div>'+
+      '<div class="itemMeta">'+esc(date)+' · '+slides.length+' Fragen · Abgeschlossen</div></div>'+
+      '<div class="actions"><button class="btn accent exportCsvBtn" type="button">CSV herunterladen</button></div>';
+    const button=el.querySelector('.exportCsvBtn');
+    button.onclick=()=>exportSessionCsv(session,button);
+    root.appendChild(el);
+  });
+}
+async function fetchAllSessionRows(table,columns,sessionId){
+  const rows=[];
+  const pageSize=1000;
+  for(let offset=0;;offset+=pageSize){
+    let query=db.from(table).select(columns).eq('session_id',sessionId);
+    if(table==='participants'){
+      query=query.order('joined_at',{ascending:true});
+    }else{
+      query=query.order('slide_index',{ascending:true}).order('created_at',{ascending:true});
+    }
+    const {data,error}=await query.range(offset,offset+pageSize-1);
+    if(error)throw error;
+    const batch=data||[];
+    rows.push(...batch);
+    if(batch.length<pageSize)return rows;
+  }
+}
+function csvCell(value){
+  if(value===null||typeof value==='undefined')return '""';
+  if(typeof value==='number'&&!Number.isFinite(value))return '""';
+  let text=String(value);
+  if(typeof value!=='number'&&/^[\s]*[=+\-@]/.test(text))text="'"+text;
+  return '"'+text.replace(/"/g,'""')+'"';
+}
+function csvDate(value){
+  return value?new Date(value).toLocaleString('de-DE',{dateStyle:'short',timeStyle:'short'}):'';
+}
+function makeExportColumns(slides){
+  const columns=[];
+  slides.forEach((slide,slideIndex)=>{
+    const question='Frage '+(slideIndex+1)+': '+(slide.question||'Ohne Fragetext');
+    if(slide.type==='Skala'&&Array.isArray(slide.scaleItems)&&slide.scaleItems.length){
+      slide.scaleItems.forEach((item,itemIndex)=>{
+        columns.push({
+          slideIndex:slideIndex,kind:'scale',itemIndex:itemIndex,
+          label:question+' – '+(item.statement||('Aussage '+(itemIndex+1)))+
+            ' ['+item.min+' bis '+item.max+']'
+        });
+      });
+    }else if(slide.type==='Pin setzen'){
+      columns.push({slideIndex:slideIndex,kind:'pin-x',label:question+' – X-Koordinate (%)'});
+      columns.push({slideIndex:slideIndex,kind:'pin-y',label:question+' – Y-Koordinate (%)'});
+    }else{
+      columns.push({slideIndex:slideIndex,kind:'answer',label:question+' ['+(slide.type||'Frage')+']'});
+    }
+  });
+  return columns;
+}
+function exportedAnswer(response,column){
+  if(!response)return '';
+  const answer=response.answer||{};
+  if(answer.teacherMarked===true)return 'Von Lehrkraft als beantwortet markiert';
+  const value=answer.value;
+  if(value===null||typeof value==='undefined')return '';
+  if(column.kind==='scale'){
+    const values=Array.isArray(value.values)?value.values:[];
+    const item=values[column.itemIndex];
+    return item&&item.value!==null&&typeof item.value!=='undefined'?Number(item.value):'';
+  }
+  if(column.kind==='pin-x'||column.kind==='pin-y'){
+    if(!value||typeof value!=='object')return '';
+    const coordinate=column.kind==='pin-x'?value.x:value.y;
+    const number=Number(coordinate);
+    return Number.isFinite(number)?number.toLocaleString('de-DE',{useGrouping:false,maximumFractionDigits:2}):'';
+  }
+  if(Array.isArray(value))return value.map((item,index)=>(index+1)+'. '+String(item)).join(' | ');
+  if(typeof value==='object')return JSON.stringify(value);
+  return value;
+}
+function downloadSessionCsv(session,headers,rows){
+  const csv='\ufeff'+[headers,...rows].map(row=>row.map(csvCell).join(';')).join('\r\n');
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
+  const url=URL.createObjectURL(blob);
+  const link=document.createElement('a');
+  const title=String(session.title||'umfrage').normalize('NFKD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,48)||'umfrage';
+  const started=session.started_at||session.created_at;
+  const date=started?new Date(started).toISOString().slice(0,10):'ohne-datum';
+  link.href=url;
+  link.download='schulumfrage-'+title+'-'+date+'-'+String(session.id).slice(0,8)+'.csv';
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  window.setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+async function exportSessionCsv(session,button){
+  if(!button||button.disabled)return;
+  button.disabled=true;
+  const originalLabel=button.textContent;
+  button.textContent='Export wird erstellt …';
+  try{
+    const [participants,responses]=await Promise.all([
+      fetchAllSessionRows('participants','id,name,joined_at',session.id),
+      fetchAllSessionRows('responses','participant_id,slide_index,answer,created_at',session.id)
+    ]);
+    const slides=Array.isArray(session.survey_snapshot)?session.survey_snapshot:[];
+    const columns=makeExportColumns(slides);
+    const responseByKey=new Map();
+    const responsesByParticipant=new Map();
+    responses.forEach(response=>{
+      responseByKey.set(response.participant_id+':'+response.slide_index,response);
+      if(!responsesByParticipant.has(response.participant_id))responsesByParticipant.set(response.participant_id,[]);
+      responsesByParticipant.get(response.participant_id).push(response);
+    });
+    const headers=['Teilnehmer','Beigetreten am','Gespeicherte Antworten'].concat(columns.map(column=>column.label));
+    const rows=participants.map(participant=>{
+      const ownResponses=responsesByParticipant.get(participant.id)||[];
+      const values=columns.map(column=>exportedAnswer(
+        responseByKey.get(participant.id+':'+column.slideIndex),column
+      ));
+      return [participant.name||'Schüler',csvDate(participant.joined_at),ownResponses.length,...values];
+    });
+    downloadSessionCsv(session,headers,rows);
+    toast('CSV exportiert: '+participants.length+' Teilnehmer, '+responses.length+' gespeicherte Antworten.');
+  }catch(error){
+    toast('Export fehlgeschlagen: '+(error.message||'Daten konnten nicht geladen werden.'));
+  }finally{
+    button.disabled=false;
+    button.textContent=originalLabel;
+  }
+}
+
 async function loadSessionCounts(){
   $('activeSessionCount').textContent='…';$('endedSessionCount').textContent='…';
   const [activeResult,endedResult]=await Promise.all([
@@ -164,7 +325,7 @@ async function endAllSessions(){
     const {data,error}=await db.rpc('end_all_owned_sessions');
     if(error)throw error;
     toast(String(data??0)+' Sitzungen beendet.');
-    await Promise.all([loadSessionCounts(),loadActiveSessions()]);
+    await Promise.all([loadSessionCounts(),loadActiveSessions(),loadEndedSessions()]);
   }catch(error){
     $('settingsStatus').textContent='Sitzungen konnten nicht beendet werden: '+error.message;
   }finally{setSessionActionsBusy(false)}
@@ -176,7 +337,7 @@ async function deleteAllSessions(){
     const {data,error}=await db.rpc('delete_all_owned_sessions');
     if(error)throw error;
     toast(String(data??0)+' Sitzungen gelöscht.');
-    await Promise.all([loadSessionCounts(),loadActiveSessions()]);
+    await Promise.all([loadSessionCounts(),loadActiveSessions(),loadEndedSessions()]);
   }catch(error){
     $('settingsStatus').textContent='Sitzungen konnten nicht gelöscht werden: '+error.message;
   }finally{setSessionActionsBusy(false)}
@@ -190,10 +351,11 @@ $('settingsModal').addEventListener('click',event=>{if(event.target===$('setting
 document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!$('settingsModal').classList.contains('hidden'))closeSettings()});
 $('endAllSessionsBtn').onclick=endAllSessions;
 $('deleteAllSessionsBtn').onclick=deleteAllSessions;
-$('refreshSessionsBtn').onclick=loadActiveSessions;
+$('refreshSessionsBtn').onclick=()=>Promise.all([loadActiveSessions(),loadEndedSessions()]);
+$('refreshEndedBtn').onclick=loadEndedSessions;
 $('newSurveyBtn').onclick=()=>window.location.href='umfrage.html?new=1';
 $('logoutBtn').onclick=async()=>{await db.auth.signOut();window.location.href='teacher.html'};
-(async()=>{const user=await requireUser();if(user){await Promise.all([loadSurveys(),loadActiveSessions()]);setInterval(()=>{if(!document.hidden)loadActiveSessions()},15000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)loadActiveSessions()})}})();
+(async()=>{const user=await requireUser();if(user){await Promise.all([loadSurveys(),loadActiveSessions(),loadEndedSessions()]);setInterval(()=>{if(!document.hidden){loadActiveSessions();loadEndedSessions()}},15000);document.addEventListener('visibilitychange',()=>{if(!document.hidden){loadActiveSessions();loadEndedSessions()}})}})();
 </script>
 </body>
 </html>
