@@ -8,7 +8,7 @@ create table if not exists public.surveys (id uuid primary key default gen_rando
 create table if not exists public.sessions (id uuid primary key default gen_random_uuid(), survey_id uuid not null references public.surveys(id) on delete cascade, owner_id uuid not null references auth.users(id) on delete cascade, title text not null, survey_snapshot jsonb not null default '[]'::jsonb, status text not null default 'lobby' check (status in ('lobby','running','ended')), current_slide integer not null default 0, join_code text not null unique, created_at timestamptz not null default now(), started_at timestamptz, updated_at timestamptz not null default now());
 create table if not exists public.participants (id uuid primary key default gen_random_uuid(), session_id uuid not null references public.sessions(id) on delete cascade, name text not null, joined_at timestamptz not null default now(), last_seen_at timestamptz not null default now());
 create table if not exists public.responses (id uuid primary key default gen_random_uuid(), session_id uuid not null references public.sessions(id) on delete cascade, participant_id uuid not null references public.participants(id) on delete cascade, slide_index integer not null, answer jsonb not null, created_at timestamptz not null default now(), updated_at timestamptz not null default now(), unique(session_id, participant_id, slide_index));
-create index if not exists surveys_owner_id_idx on public.surveys(owner_id); create index if not exists sessions_owner_id_idx on public.sessions(owner_id); create index if not exists sessions_survey_id_idx on public.sessions(survey_id); create index if not exists participants_session_id_idx on public.participants(session_id); create index if not exists responses_session_id_idx on public.responses(session_id);
+create index if not exists surveys_owner_id_idx on public.surveys(owner_id); create index if not exists sessions_owner_id_idx on public.sessions(owner_id); create index if not exists sessions_survey_id_idx on public.sessions(survey_id); create index if not exists participants_session_id_idx on public.participants(session_id); create index if not exists responses_session_id_idx on public.responses(session_id); create index if not exists responses_participant_id_idx on public.responses(participant_id);
 create unique index if not exists participants_session_normalized_name_uidx on public.participants(session_id, lower(btrim(name)));
 alter table public.surveys enable row level security; alter table public.sessions enable row level security; alter table public.participants enable row level security; alter table public.responses enable row level security;
 
@@ -212,6 +212,44 @@ begin
   return v_count;
 end;
 $function$;
+
+create or replace function public.restart_owned_session(p_session_id uuid)
+returns setof public.sessions
+language plpgsql
+security definer
+set search_path = ''
+as $function$
+declare
+  v_owner_id uuid;
+begin
+  if auth.uid() is null then
+    raise exception 'Not authenticated';
+  end if;
+
+  select s.owner_id into v_owner_id
+  from public.sessions s
+  where s.id = p_session_id
+  for update;
+
+  if v_owner_id is null or v_owner_id <> auth.uid() then
+    raise exception 'Session not found or not owned by current user';
+  end if;
+
+  delete from public.responses where session_id = p_session_id;
+
+  update public.sessions
+  set current_slide = 0,
+      status = 'running',
+      started_at = coalesce(started_at, pg_catalog.now()),
+      updated_at = pg_catalog.now()
+  where id = p_session_id
+  returning *;
+  return query select * from public.sessions where id = p_session_id;
+end;
+$function$;
+
+revoke all on function public.restart_owned_session(uuid) from public, anon, authenticated;
+grant execute on function public.restart_owned_session(uuid) to authenticated;
 
 revoke all on function public.end_all_owned_sessions() from public, anon, authenticated;
 revoke all on function public.delete_all_owned_sessions() from public, anon, authenticated;
