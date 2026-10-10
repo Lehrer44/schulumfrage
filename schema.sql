@@ -16,6 +16,7 @@ alter table public.surveys enable row level security; alter table public.session
 create schema if not exists private;
 revoke all on schema private from public, anon, authenticated;
 create table if not exists private.join_code_rate_limits (ip_hash text primary key, window_start timestamptz not null default now(), attempts integer not null default 0);
+alter table private.join_code_rate_limits enable row level security;
 revoke all on table private.join_code_rate_limits from public, anon, authenticated;
 drop function if exists public.join_session_by_code(text,text);
 create or replace function public.join_session_by_code(p_join_code text,p_name text,p_participant_id uuid)
